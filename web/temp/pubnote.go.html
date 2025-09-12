@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{if .note}}{{.note.Title}} - GoNote{{else}}GoNote{{end}}</title>
+    <style>
+        body {
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #1c1c1c;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-input {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            line-height: 34px;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #1c1c1c;
+            width: 100%;
+        }
+        .title-input::placeholder {
+            color: #bbb;
+        }
+
+        .meta-input {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-size: 15px;
+            line-height: 18px;
+            color: #79828B;
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            padding-top: 2px;
+        }
+        .meta-input::placeholder {
+            color: #bbb;
+        }
+
+        .pub-btn {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 17px;
+            color: #000;
+            text-decoration: none;
+            border: 2px solid #333;
+            border-radius: 16px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            margin: 0;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .article-content {
+            font-family: CustomSerif,Georgia,Cambria,'Times New Roman',serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 18px;
+            line-height: 1.58;
+        }
+
+        .article-content p {
+            margin: 1em 0;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em 0;
+        }
+
+        .pub-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
+            <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
+        </div>
+        <div class="pub-container">
+            <button class="pub-btn main-btn" id="pubBtn">Publish</button>
+            <button class="pub-btn extra-btn" id="passBtn">Publish Password</button>
+        </div>
+    </div>
+
+    <article class="article-content">
+        {{.content}}
+    </article>
+</div>
+
+<script>
+    const pubBtn = document.getElementById("pubBtn");
+    pubBtn.addEventListener("click", () => {
+        // Пока заглушка
+        alert("Publish clicked!");
+    });
+</script>
+</body>
+</html>

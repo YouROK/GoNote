@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.note.Title}} - GoNote</title>
+    <style>
+        body {
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #1c1c1c;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-left h1 {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 32px;
+            line-height: 34px;
+            margin: 0;
+        }
+
+        .header-left .meta {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-size: 15px;
+            line-height: 18px;
+            color: #79828B;
+            margin: 4px 0 0 0;
+        }
+
+        .pub-btn {
+            font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 17px;
+            color: #000;
+            text-decoration: none;
+            border: 2px solid #333;
+            border-radius: 16px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            margin: 0;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .article-content {
+            font-family: CustomSerif,Georgia,Cambria,'Times New Roman',serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 18px;
+            line-height: 1.58;
+        }
+
+        .article-content p {
+            margin: 1em 0;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em 0;
+        }
+
+        .pub-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 20% auto 0 auto;
+            padding: 20px 20px 30px 20px;
+            max-width: 320px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            animation: modalShow 0.3s ease-out;
+        }
+
+        @keyframes modalShow {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .modal-content input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background-color: #007aff;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-content button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <h1>{{.note.Title}}</h1>
+            <span class="meta">{{.note.Author}} ● {{.note.CreatedAt.Format "January 02, 2006"}}</span>
+        </div>
+        <div class="pub-container">
+            <button class="pub-btn" id="editBtn">Edit</button>
+        </div>
+    </div>
+
+    <article class="article-content">
+        {{.content}}
+    </article>
+</div>
+
+<!-- Модальное окно для пароля -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <p class="modal-title">Введите пароль</p>
+        <input type="password" id="notePassword" placeholder="Пароль">
+        <button id="submitPassword">Войти</button>
+    </div>
+</div>
+
+<script>
+    // Значения из бэкенда
+    const hasEdit = {{.hasEdit}};
+    const hasPass = {{.hasPass}};
+    const noteID = "{{.note.ID}}";
+
+    // Элементы
+    const modal = document.getElementById("passwordModal");
+    const passwordInput = document.getElementById("notePassword");
+    const submitBtn = document.getElementById("submitPassword");
+    const editBtn = document.getElementById("editBtn");
+
+    // Клик по Edit
+    editBtn.addEventListener("click", () => {
+        if (hasEdit) {
+            window.location.href = "/note/" + noteID + "/edit";
+        } else if (hasPass) {
+            modal.style.display = "block";
+            passwordInput.focus();
+        }
+    });
+
+    // Клик "Войти"
+    submitBtn.addEventListener("click", () => {
+        const password = passwordInput.value;
+        fetch("/note/" + noteID + "/checkpass", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({password: password})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = "/note/" + noteID + "/edit";
+                } else {
+                    alert("Неверный пароль");
+                }
+            });
+    });
+
+    // Обработка клавиш
+    document.addEventListener("keydown", (e) => {
+        if (modal.style.display === "block") {
+            if (e.key === "Escape") {
+                modal.style.display = "none";
+            }
+            if (e.key === "Enter" && document.activeElement === passwordInput) {
+                submitBtn.click();
+            }
+        }
+    });
+
+    // Клик вне окна
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+            passwordInput.value = "";
+        }
+    });
+</script>
+</body>
+</html>
