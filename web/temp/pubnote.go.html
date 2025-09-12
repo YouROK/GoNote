@@ -15,20 +15,24 @@
             padding: 0;
         }
 
-        .container {
+        .page {
+            position: relative;
+            margin: 30px 20px;
+        }
+
+        .content {
             max-width: 680px;
-            margin: 0 auto;
-            padding: 30px 20px;
+            margin: 0 auto; /* Центрируем только этот блок */
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .header-left {
+        .sidebar {
+            position: absolute;
+            top: 0;
+            left: calc(50% + 680px/2 + 40px); /* 50% + половина ширины content + расстояние */
             display: flex;
             flex-direction: column;
+            gap: 10px;
+            justify-content: flex-start;
         }
 
         .title-input {
@@ -42,9 +46,6 @@
             color: #1c1c1c;
             width: 100%;
         }
-        .title-input::placeholder {
-            color: #bbb;
-        }
 
         .meta-input {
             font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
@@ -57,50 +58,37 @@
             width: 100%;
             padding-top: 2px;
         }
-        .meta-input::placeholder {
-            color: #bbb;
-        }
 
         .pub-btn {
             font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
             font-weight: 600;
-            font-style: normal;
             font-size: 17px;
             color: #000;
-            text-decoration: none;
             border: 2px solid #333;
             border-radius: 16px;
             text-transform: uppercase;
-            padding: 4px 12px;
-            margin: 0;
+            padding: 6px 14px;
             background-color: #fff;
             cursor: pointer;
         }
 
-        .pub-container {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            justify-content: center;
-        }
-
         #editor {
             min-height: 300px;
-            border: none;          /* убрали рамку */
-            background: transparent; /* прозрачный фон */
-            padding: 0;            /* убрали внутренние отступы */
+            border: none;
+            background: transparent;
+            padding: 0;
             margin-top: 20px;
-            font-size: 18px;       /* увеличили текст */
-            line-height: 1.6;      /* нормальный интерлиньяж */
+            font-size: 18px;
+            line-height: 1.6;
         }
 
         .ql-editor {
             font-family: CustomSerif, Georgia, Cambria, "Times New Roman", serif;
-            padding: 0 !important;
-            margin: 0 !important;
             font-size: 18px;
             font-weight: 400;
             line-height: 1.58;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         .ql-editor.ql-blank::before {
@@ -118,60 +106,46 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <div class="header-left">
-            <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
-            <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
-        </div>
-        <div class="pub-container">
-            <button class="pub-btn main-btn" id="pubBtn">Publish</button>
-            <button class="pub-btn extra-btn" id="passBtn">Publish Password</button>
+<div class="page">
+    <div class="content">
+        <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
+        <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
+        <div id="editor">
+            {{.content}}
         </div>
     </div>
 
-    <!-- Редактор -->
-    <div id="editor">
-        {{.content}}
+    <div class="sidebar">
+        <button class="pub-btn" id="pubBtn">Publish</button>
+        <button class="pub-btn" id="passBtn">Publish Password</button>
     </div>
 </div>
 
 <script>
-    // Инициализация Quill
     const quill = new Quill('#editor', {
         theme: 'bubble',
         modules: {
             toolbar: [
-                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
                 ['link', 'image', 'video', 'formula'],
-
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                [{ 'direction': 'rtl' }],                         // text direction
-
-                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-
-                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
                 [{ 'align': [] }],
-
                 ['clean']
             ]
         },
         placeholder: 'Your note...'
     });
 
-    // Кнопка Publish — сохраняем HTML и выводим в консоль
     document.getElementById('pubBtn').addEventListener('click', () => {
-        const title = document.getElementById('noteTitle').value;
-        const author = document.getElementById('noteAuthor').value;
         const htmlContent = quill.root.innerHTML;
-
-        console.log('Title:', title);
-        console.log('Author:', author);
         console.log('HTML content:', htmlContent);
-
         alert('Заметка сохранена! Проверьте консоль.');
     });
 </script>
