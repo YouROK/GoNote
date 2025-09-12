@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"GoNote/models"
@@ -121,9 +122,16 @@ func EditNote(c *gin.Context) {
 		return
 	}
 
-	// Если всё ок → рендерим страницу редактирования
+	acceptLanguage := c.GetHeader("Accept-Language")
+	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
+
 	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
-		"note":    note,
-		"content": template.HTML(content),
+		"note":      note,
+		"content":   template.HTML(content),
+		"isRussian": isRussian,
 	})
+}
+
+func UpdateNote(c *gin.Context) {
+
 }
