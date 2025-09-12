@@ -214,15 +214,17 @@
     </div>
 
     <div class="sidebar">
-        <button class="pub-btn" id="editBtn">Edit</button>
+        {{if or .hasEdit .hasPass}}
+            <button class="pub-btn" id="editBtn">Edit</button>
+        {{end}}
     </div>
 </div>
 
 <div id="passwordModal" class="modal">
     <div class="modal-content">
-        <p class="modal-title">Введите пароль</p>
-        <input type="password" id="notePassword" placeholder="Пароль">
-        <button id="submitPassword">Войти</button>
+        <p class="modal-title">Enter Password</p>
+        <input type="password" id="notePassword" placeholder="Password">
+        <button id="submitPassword">Edit Note</button>
     </div>
 </div>
 

@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"bytes"
 	"html/template"
 	"math/rand"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"GoNote/storage/fstorage"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yuin/goldmark"
 )
 
 // HandleNote выдаёт страницу заметки
@@ -32,16 +30,9 @@ func HandleNote(c *gin.Context) {
 	hasEdit := contains(sess.Notes, noteID)
 	hasPass := note.Password != ""
 
-	var buf bytes.Buffer
-	if err := goldmark.Convert([]byte(content), &buf); err != nil {
-		c.String(http.StatusInternalServerError, "Ошибка конвертации Markdown")
-		return
-	}
-	htmlContent := template.HTML(buf.String())
-
 	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
 		"note":    note,
-		"content": htmlContent,
+		"content": template.HTML(content),
 		"hasEdit": hasEdit,
 		"hasPass": hasPass,
 	})
@@ -133,6 +124,6 @@ func EditNote(c *gin.Context) {
 	// Если всё ок → рендерим страницу редактирования
 	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
 		"note":    note,
-		"content": content,
+		"content": template.HTML(content),
 	})
 }
