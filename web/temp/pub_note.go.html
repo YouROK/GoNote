@@ -53,6 +53,8 @@
             background: transparent;
             color: #1c1c1c;
             width: 100%;
+            padding: 0 !important;
+            margin: 10px 0 0 0 !important;
         }
 
         .meta-input {
@@ -64,7 +66,8 @@
             outline: none;
             background: transparent;
             width: 100%;
-            padding-top: 2px;
+            padding: 0 !important;
+            margin: 10px 0 0 0 !important;
         }
 
         .pub-btn {
@@ -159,26 +162,129 @@
 </div>
 
 <script>
+    const icons = Quill.import('ui/icons');
+
+    icons['myImage'] = `
+<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+  <!-- Верхняя линия -->
+  <line class="ql-stroke" x1="3" y1="4" x2="15" y2="4"></line>
+  <!-- Левая линия -->
+  <line class="ql-stroke" x1="3" y1="4" x2="3" y2="14"></line>
+  <!-- Правая линия (не до конца) -->
+  <line class="ql-stroke" x1="15" y1="4" x2="15" y2="7"></line>
+  <!-- Нижняя линия (не до конца) -->
+  <line class="ql-stroke" x1="3" y1="14" x2="7" y2="14"></line>
+
+  <!-- Солнце -->
+  <circle class="ql-fill" cx="6" cy="7" r="1"></circle>
+
+  <!-- Иконка ссылки -->
+  <g transform="scale(0.8) translate(7,7)">
+    <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line>
+    <path class="ql-even ql-stroke"
+          d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path>
+    <path class="ql-even ql-stroke"
+          d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path>
+  </g>
+</svg>
+`;
+
+    const myImageButton = 'myImage';
     const quill = new Quill('#editor', {
         theme: 'bubble',
         modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline', 'strike'],
-                ['blockquote', 'code-block'],
-                ['link', 'image', 'video', 'formula'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                [{ 'direction': 'rtl' }],
-                [{ 'size': ['small', false, 'large', 'huge'] }],
-                [{ 'color': [] }, { 'background': [] }],
-                [{ 'font': [] }],
-                [{ 'align': [] }],
-                ['clean']
-            ]
+            toolbar: {
+                container: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image', myImageButton, 'video', 'formula'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'font': [] }],
+                    [{ 'align': [] }],
+                    ['clean'] // Здесь добавлена запятая
+                ],
+                handlers: {
+                    [myImageButton]: function() {
+                        const tooltip = this.quill.theme.tooltip;
+
+                        tooltip.edit('image', '');
+                        tooltip.textbox.placeholder = 'Image Url';
+
+                        const originalSave = tooltip.save;
+
+                        tooltip.save = function() {
+                            const url = tooltip.textbox.value;
+                            if (url) {
+                                const range = quill.getSelection(true);
+                                if (range && range.length > 0) {
+                                    quill.deleteText(range.index, range.length);
+                                }
+                                quill.insertEmbed(range.index, 'image', url);
+                                quill.setSelection(range.index + 1);
+                            }
+                            tooltip.hide();
+                        }
+                    },
+                    'clean': function() {
+                        const range = this.quill.getSelection();
+                        if (!range || range.length === 0) return;
+
+                        const delta = this.quill.getContents(range.index, range.length);
+                        let replaced = false;
+
+                        delta.ops.forEach((op, i) => {
+                            if (op.insert && op.insert.image) {
+                                const imageUrl = op.insert.image;
+                                this.quill.deleteText(range.index + i, 1, 'user');
+                                this.quill.insertText(range.index + i, imageUrl, { link: imageUrl }, 'user');
+                                replaced = true;
+                            }
+                        });
+
+                        if (!replaced) {
+                            this.quill.removeFormat(range.index, range.length, 'user');
+                        }
+                    }
+                }
+            },
         },
         placeholder: 'Your note...'
     });
+
+    quill.root.addEventListener('paste', (e) => {
+        const clipboardData = e.clipboardData || window.clipboardData;
+        const text = clipboardData.getData('text').trim();
+
+        if (!text || !/^https?:\/\//i.test(text)) return;
+
+        e.preventDefault();
+
+        const range = quill.getSelection(true) || { index: quill.getLength() };
+
+        // создаём временный объект Image для проверки, так как CORS не дает проверять через fetch
+        const img = new Image();
+        img.onload = () => {
+            quill.insertEmbed(range.index, 'image', text, 'user');
+            quill.setSelection(range.index + 1);
+        };
+        img.onerror = () => {
+            try {
+                quill.insertText(range.index, text, { link: text });
+                quill.setSelection(range.index + text.length);
+            } catch {
+                quill.insertText(range.index, text, 'user');
+                quill.setSelection(range.index + text.length);
+            }
+        };
+
+        img.src = text;
+    });
+
 
     document.getElementById('pubBtn').addEventListener('click', () => {
         const htmlContent = quill.root.innerHTML;
