@@ -8,7 +8,7 @@ import (
 
 // Главная страница
 func HandleIndex(c *gin.Context) {
-	c.HTML(http.StatusOK, "pubnote.go.html", gin.H{
+	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
 		"note":    nil,
 		"content": "",
 	})

@@ -39,7 +39,7 @@ func HandleNote(c *gin.Context) {
 	}
 	htmlContent := template.HTML(buf.String())
 
-	c.HTML(http.StatusOK, "note.go.html", gin.H{
+	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
 		"note":    note,
 		"content": htmlContent,
 		"hasEdit": hasEdit,
@@ -131,7 +131,7 @@ func EditNote(c *gin.Context) {
 	}
 
 	// Если всё ок → рендерим страницу редактирования
-	c.HTML(http.StatusOK, "pubnote.go.html", gin.H{
+	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
 		"note":    note,
 		"content": content,
 	})
