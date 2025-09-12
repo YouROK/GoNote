@@ -15,37 +15,59 @@
             padding: 0;
         }
 
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 30px 20px;
+        /* Десктопная версия */
+        .page {
+            display: flex; /* Используем Flexbox для основного контейнера */
+            justify-content: center; /* Центрируем содержимое по горизонтали */
+            margin: 30px 20px;
+            gap: 40px; /* Расстояние между колонками */
+        }
+
+        .left-sidebar {
+            flex-shrink: 0;
+            width: 150px; /* Фиксированная ширина для баланса */
+        }
+
+        .content {
+            flex-grow: 1; /* Позволяет блоку занимать всё доступное место */
+            max-width: 680px; /* Ограничиваем максимальную ширину */
+        }
+
+        .sidebar {
+            flex-shrink: 0;
+            width: 150px; /* Фиксированная ширина для баланса */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: flex-start;
         }
 
         .header {
             display: flex;
-            justify-content: space-between;
-        }
-
-        .header-left {
-            display: flex;
             flex-direction: column;
         }
 
-        .header-left h1 {
+        .header-title {
             font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
             font-weight: 700;
             font-style: normal;
             font-size: 32px;
             line-height: 34px;
-            margin: 0;
+            padding: 0 !important;
+            margin: 10px 0 0 0 !important;
         }
 
-        .header-left .meta {
+        .header-meta {
             font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
             font-size: 15px;
             line-height: 18px;
             color: #79828B;
-            margin: 4px 0 0 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            padding: 0 !important;
+            margin: 10px 0 0 0 !important;
         }
 
         .pub-btn {
@@ -58,10 +80,10 @@
             border: 2px solid #333;
             border-radius: 16px;
             text-transform: uppercase;
-            padding: 4px 12px;
-            margin: 0;
+            padding: 6px 14px;
             background-color: #fff;
             cursor: pointer;
+            text-align: center; /* Для центрирования текста на кнопке */
         }
 
         .article-content {
@@ -83,14 +105,7 @@
             margin: 1em 0;
         }
 
-        .pub-container {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            justify-content: center;
-        }
-
-        /* --- Modal --- */
+        /* --- Модальное окно --- */
         .modal {
             display: none;
             position: fixed;
@@ -153,26 +168,56 @@
         .modal-content button:hover {
             background-color: #005bb5;
         }
+
+        /* Медиазапрос для мобильных устройств */
+        @media (max-width: 768px) {
+            .page {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .left-sidebar {
+                display: none; /* Скрываем пустой сайдбар на мобильных */
+            }
+
+            .content {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .sidebar {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .pub-btn {
+                flex: 1;
+                margin: 0 5px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <div class="header-left">
-            <h1>{{.note.Title}}</h1>
-            <span class="meta">{{.note.Author}} ● {{.note.CreatedAt.Format "January 02, 2006"}}</span>
+<div class="page">
+    <div class="left-sidebar"></div>
+    <div class="content">
+        <div class="header">
+            <h1 class="header-title">{{.note.Title}}</h1>
+            <span class="header-meta">{{.note.Author}} ● {{.note.CreatedAt.Format "January 02, 2006"}}</span>
         </div>
-        <div class="pub-container">
-            <button class="pub-btn" id="editBtn">Edit</button>
-        </div>
+
+        <article class="article-content">
+            {{.content}}
+        </article>
     </div>
 
-    <article class="article-content">
-        {{.content}}
-    </article>
+    <div class="sidebar">
+        <button class="pub-btn" id="editBtn">Edit</button>
+    </div>
 </div>
 
-<!-- Модальное окно для пароля -->
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <p class="modal-title">Введите пароль</p>
