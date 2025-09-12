@@ -15,7 +15,6 @@
             padding: 0;
         }
 
-        /* Десктопная версия */
         .page {
             display: flex;
             justify-content: center;
@@ -25,7 +24,7 @@
 
         .left-sidebar {
             flex-shrink: 0;
-            width: 150px; /* Фиксированная ширина для баланса */
+            width: 150px;
         }
 
         .content {
@@ -35,13 +34,12 @@
 
         .sidebar {
             flex-shrink: 0;
-            width: 150px; /* Фиксированная ширина для баланса */
+            width: 150px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             justify-content: flex-start;
         }
-        /* Конец десктопной версии */
 
         .title-input {
             font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
@@ -120,7 +118,7 @@
             }
 
             .left-sidebar {
-                display: none; /* Скрываем пустой сайдбар на мобильных */
+                display: none;
             }
 
             .content {
@@ -138,6 +136,65 @@
                 flex: 1;
                 margin: 0 5px;
             }
+        }
+
+        /* --- Модальное окно --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 20% auto 0 auto;
+            padding: 20px 20px 30px 20px;
+            max-width: 320px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            animation: modalShow 0.3s ease-out;
+        }
+
+        @keyframes modalShow {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center !important;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background-color: #007aff;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-content p {
+            text-align: left;
+        }
+
+        .modal-content button:hover {
+            background-color: #005bb5;
         }
     </style>
 
@@ -158,6 +215,23 @@
     <div class="sidebar">
         <button class="pub-btn" id="pubBtn">Publish</button>
         <button class="pub-btn" id="passBtn">Publish Password</button>
+    </div>
+</div>
+
+<!-- Модальное окно для предупреждения о пароле -->
+<div id="pubModal" class="modal">
+    <div class="modal-content">
+        {{if .isRussian}}
+            <p class="modal-title">Пожалуйста, запомните</p>
+            <p>Если вы захотите отредактировать эту страницу позже, вам понадобится этот пароль. Запишите или запомните этот пароль</p>
+            <p>Ваш Пароль: <span id="modalPassword" style="font-weight:bold;"></span></p>
+            <button id="confirmPub">Опубликовать</button>
+        {{else}}
+            <p class="modal-title">Please Remember</p>
+            <p>If you want to edit this page later, you should remember or save the password</p>
+            <p>Your Password: <span id="modalPassword" style="font-weight:bold;"></span></p>
+            <button id="confirmPub">Publish</button>
+        {{end}}
     </div>
 </div>
 
@@ -284,13 +358,60 @@
 
         img.src = text;
     });
+</script>
+<script>
+    const passBtn = document.getElementById('passBtn');
+    const pubBtn = document.getElementById('pubBtn');
+    const pubModal = document.getElementById('pubModal');
+    const confirmPubBtn = document.getElementById('confirmPub');
+    const noteID = "{{if .note}}{{.note.ID}}{{end}}";
 
+    function generatePassword(length = 24) {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let pass = "";
+        for (let i = 0; i < length; i++) {
+            pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return pass;
+    }
 
-    document.getElementById('pubBtn').addEventListener('click', () => {
-        const htmlContent = quill.root.innerHTML;
-        console.log('HTML content:', htmlContent);
-        alert('Заметка сохранена! Проверьте консоль.');
+    let preGeneratedPassword = generatePassword();
+
+    passBtn.addEventListener("click", () => {
+        document.getElementById('modalPassword').innerText = preGeneratedPassword;
+        pubModal.style.display = "block";
+    });
+
+    // Подтверждение публикации (эта часть кода остается без изменений)
+    confirmPubBtn.addEventListener('click', () => {
+        const title = document.querySelector('.title-input').value;
+        const author = document.querySelector('.meta-input').value;
+        const content = quill.root.innerHTML;
+
+        fetch(`/note/${noteID}/pub`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title, author, content, preGeneratedPassword})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Note published successfully!');
+                    window.location.href = `/note/${noteID}`;
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            });
+
+        pubModal.style.display = 'none';
+    });
+
+    pubModal.addEventListener("click", (event) => {
+        if (event.target === pubModal) {
+            pubModal.style.display = "none";
+        }
     });
 </script>
+
 </body>
 </html>
