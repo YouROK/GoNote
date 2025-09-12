@@ -77,25 +77,6 @@
             cursor: pointer;
         }
 
-        .article-content {
-            font-family: CustomSerif,Georgia,Cambria,'Times New Roman',serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 18px;
-            line-height: 1.58;
-        }
-
-        .article-content p {
-            margin: 1em 0;
-        }
-
-        .article-content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 1em 0;
-        }
-
         .pub-container {
             display: flex;
             flex-direction: column;
@@ -103,7 +84,38 @@
             justify-content: center;
         }
 
+        #editor {
+            min-height: 300px;
+            border: none;          /* убрали рамку */
+            background: transparent; /* прозрачный фон */
+            padding: 0;            /* убрали внутренние отступы */
+            margin-top: 20px;
+            font-size: 18px;       /* увеличили текст */
+            line-height: 1.6;      /* нормальный интерлиньяж */
+        }
+
+        .ql-editor {
+            font-family: CustomSerif, Georgia, Cambria, "Times New Roman", serif;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.58;
+        }
+
+        .ql-editor.ql-blank::before {
+            font-style: normal !important;
+            color: #bbb;
+            left: 0 !important;
+            top: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
     </style>
+
+    <link href="https://cdn.quilljs.com/1.3.7/quill.bubble.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 </head>
 <body>
 <div class="container">
@@ -118,16 +130,49 @@
         </div>
     </div>
 
-    <article class="article-content">
+    <!-- Редактор -->
+    <div id="editor">
         {{.content}}
-    </article>
+    </div>
 </div>
 
 <script>
-    const pubBtn = document.getElementById("pubBtn");
-    pubBtn.addEventListener("click", () => {
-        // Пока заглушка
-        alert("Publish clicked!");
+    // Инициализация Quill
+    const quill = new Quill('#editor', {
+        theme: 'bubble',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+                ['link', 'image', 'video', 'formula'],
+
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+
+                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'align': [] }],
+
+                ['clean']
+            ]
+        },
+        placeholder: 'Your note...'
+    });
+
+    // Кнопка Publish — сохраняем HTML и выводим в консоль
+    document.getElementById('pubBtn').addEventListener('click', () => {
+        const title = document.getElementById('noteTitle').value;
+        const author = document.getElementById('noteAuthor').value;
+        const htmlContent = quill.root.innerHTML;
+
+        console.log('Title:', title);
+        console.log('Author:', author);
+        console.log('HTML content:', htmlContent);
+
+        alert('Заметка сохранена! Проверьте консоль.');
     });
 </script>
 </body>
