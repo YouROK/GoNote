@@ -2,14 +2,13 @@ package main
 
 import (
 	"GoNote/config"
-	"GoNote/logg"
 	"GoNote/web"
+	"log"
 )
 
 func main() {
+	log.Println("Starting GoNote...")
 	config.LoadConfig()
-	logg.Init()
-	logg.Info("Starting GoNote...")
 
 	server := web.NewServer()
 	server.Run()
