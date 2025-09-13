@@ -21,7 +21,7 @@ func defaultConfig() *Config {
 	cfg := &Config{}
 
 	cfg.Server.Host = "0.0.0.0"
-	cfg.Server.Port = 8080
+	cfg.Server.Port = 8095
 
 	return cfg
 }
