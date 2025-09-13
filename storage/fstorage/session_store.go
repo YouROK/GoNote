@@ -2,11 +2,11 @@ package fstorage
 
 import (
 	"GoNote/models"
-	"crypto/rand"
-	"encoding/hex"
+	"GoNote/utils"
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func (fs *FileStore) sessionPath(sessionID string) string {
@@ -15,13 +15,12 @@ func (fs *FileStore) sessionPath(sessionID string) string {
 
 // Создание новой сессии
 func (fs *FileStore) CreateSession() (*models.Session, error) {
-	b := make([]byte, 16)
-	rand.Read(b)
-	sessionID := hex.EncodeToString(b)
+	sessionID := utils.RandStr(16)
 
 	sess := &models.Session{
-		ID:    sessionID,
-		Notes: []string{},
+		ID:        sessionID,
+		Notes:     []string{},
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour), // сессия живёт 7 дней
 	}
 
 	if err := os.MkdirAll(fs.sessions, 0755); err != nil {
@@ -48,12 +47,17 @@ func (fs *FileStore) LoadSession(sessionID string) (*models.Session, error) {
 		return nil, err
 	}
 
+	if time.Now().After(sess.ExpiresAt) {
+		fs.DeleteSession(sessionID)
+		return nil, os.ErrNotExist
+	}
+
 	return &sess, nil
 }
 
 // Сохраняем сессию
 func (fs *FileStore) SaveSession(sess *models.Session) error {
-	data, _ := json.MarshalIndent(sess, "", "  ")
+	data, _ := json.Marshal(sess)
 	return os.WriteFile(fs.sessionPath(sess.ID), data, 0644)
 }
 
