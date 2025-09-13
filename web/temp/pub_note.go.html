@@ -200,6 +200,9 @@
 
     <link href="https://cdn.quilljs.com/1.3.7/quill.bubble.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
 </head>
 <body>
 <div class="page">
@@ -364,7 +367,36 @@
     const pubBtn = document.getElementById('pubBtn');
     const pubModal = document.getElementById('pubModal');
     const confirmPubBtn = document.getElementById('confirmPub');
-    const noteID = "{{if .note}}{{.note.ID}}{{end}}";
+    const noteID = "{{if .note}}{{.note.ID}}{{else}}new{{end}}";
+    const preGeneratedPassword = generatePassword();
+
+    function pubNote(pass) {
+        const title = document.querySelector('.title-input').value;
+        const author = document.querySelector('.meta-input').value;
+        const content = quill.root.innerHTML;
+
+        if (!content){
+            return;
+        }
+
+        fetch(`/note/${noteID}/pub`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title, author, content, password:pass})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = `/note/`+data.noteID;
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            });
+    }
+
+    pubBtn.addEventListener('click', () => {
+        pubNote("");
+    });
 
     function generatePassword(length = 24) {
         const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -375,34 +407,13 @@
         return pass;
     }
 
-    let preGeneratedPassword = generatePassword();
-
     passBtn.addEventListener("click", () => {
         document.getElementById('modalPassword').innerText = preGeneratedPassword;
         pubModal.style.display = "block";
     });
 
-    // Подтверждение публикации (эта часть кода остается без изменений)
     confirmPubBtn.addEventListener('click', () => {
-        const title = document.querySelector('.title-input').value;
-        const author = document.querySelector('.meta-input').value;
-        const content = quill.root.innerHTML;
-
-        fetch(`/note/${noteID}/pub`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({title, author, content, preGeneratedPassword})
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.ok) {
-                    alert('Note published successfully!');
-                    window.location.href = `/note/${noteID}`;
-                } else {
-                    alert('Error: ' + (data.error || 'Unknown error'));
-                }
-            });
-
+        pubNote(preGeneratedPassword);
         pubModal.style.display = 'none';
     });
 

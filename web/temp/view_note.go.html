@@ -197,7 +197,41 @@
                 margin: 0 5px;
             }
         }
+
+        #editor {
+            min-height: 300px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .ql-editor {
+            font-family: CustomSerif, Georgia, Cambria, "Times New Roman", serif;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.58;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .ql-editor.ql-blank::before {
+            font-style: normal !important;
+            color: #bbb;
+            left: 0 !important;
+            top: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
     </style>
+
+    <link href="https://cdn.quilljs.com/1.3.7/quill.bubble.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
 </head>
 <body>
 <div class="page">
@@ -205,12 +239,12 @@
     <div class="content">
         <div class="header">
             <h1 class="header-title">{{.note.Title}}</h1>
-            <span class="header-meta">{{.note.Author}} ● {{.note.CreatedAt.Format "January 02, 2006"}}</span>
+            <span class="header-meta">{{if .note.Author}}{{.note.Author}} ● {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}</span>
         </div>
 
-        <article class="article-content">
+        <div id="editor">
             {{.content}}
-        </article>
+        </div>
     </div>
 
     <div class="sidebar">
@@ -227,7 +261,13 @@
         <button id="submitPassword">Edit Note</button>
     </div>
 </div>
-
+<script>
+    new Quill('#editor', {
+        readOnly: true,
+        theme: 'bubble',
+    });
+</script>
+{{if or .hasEdit .hasPass}}
 <script>
     // Значения из бэкенда
     const hasEdit = {{.hasEdit}};
@@ -288,5 +328,6 @@
         }
     });
 </script>
+{{end}}
 </body>
 </html>
