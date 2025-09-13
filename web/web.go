@@ -14,6 +14,8 @@ type WebServer struct {
 }
 
 func NewServer() *WebServer {
+	gin.SetMode(gin.ReleaseMode)
+
 	store := fstorage.NewFileStore("db")
 	return &WebServer{store: store}
 }
