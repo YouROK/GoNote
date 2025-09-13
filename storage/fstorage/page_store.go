@@ -74,36 +74,3 @@ func (fs *FileStore) ListNotes() ([]*models.Note, error) {
 	}
 	return notes, nil
 }
-
-// ===== Работа с assets =====
-
-func (fs *FileStore) SaveAsset(noteID, filename string, data []byte) error {
-	assetsPath := filepath.Join(fs.notes, noteID, "assets")
-	if err := os.MkdirAll(assetsPath, 0755); err != nil {
-		return err
-	}
-	return os.WriteFile(filepath.Join(assetsPath, filename), data, 0644)
-}
-
-func (fs *FileStore) LoadAsset(noteID, filename string) ([]byte, error) {
-	return os.ReadFile(filepath.Join(fs.notes, noteID, "assets", filename))
-}
-
-func (fs *FileStore) ListAssets(noteID string) ([]string, error) {
-	assetsPath := filepath.Join(fs.notes, noteID, "assets")
-	files, err := os.ReadDir(assetsPath)
-	if err != nil {
-		return nil, err
-	}
-	var list []string
-	for _, f := range files {
-		if !f.IsDir() {
-			list = append(list, f.Name())
-		}
-	}
-	return list, nil
-}
-
-func (fs *FileStore) DeleteAsset(noteID, filename string) error {
-	return os.Remove(filepath.Join(fs.notes, noteID, "assets", filename))
-}
