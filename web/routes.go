@@ -10,5 +10,5 @@ func (ws *WebServer) SetupRoutesPages() {
 	all.GET("/note/:noteID", pages.HandleNote)
 	all.POST("/note/:noteID/checkpass", pages.CheckNotePassword)
 	all.GET("/note/:noteID/edit", pages.EditNote)
-	all.POST("/note/:noteID/pub", pages.UpdateNote)
+	all.POST("/note/:noteID/pub", pages.PublishNote)
 }
