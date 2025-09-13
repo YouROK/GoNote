@@ -1,8 +1,6 @@
 package config
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,18 +13,6 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"server"`
-
-	Auth struct {
-		JWTSecret string `yaml:"jwt_secret"`
-		TokenTTL  int    `yaml:"token_ttl"`
-	} `yaml:"auth"`
-
-	AdminUser string `yaml:"admin_user"`
-
-	Logging struct {
-		Level string `yaml:"level"`
-		File  string `yaml:"file"`
-	} `yaml:"logging"`
 }
 
 var Cfg *Config
@@ -36,15 +22,6 @@ func defaultConfig() *Config {
 
 	cfg.Server.Host = "0.0.0.0"
 	cfg.Server.Port = 8080
-
-	cfg.Auth.JWTSecret = randomJWTSecret(32)
-	cfg.Auth.TokenTTL = 3600
-
-	cfg.AdminUser = "admin"
-
-	//cfg.Logging.Level = "warn"
-	cfg.Logging.Level = "debug"
-	cfg.Logging.File = "app.log"
 
 	return cfg
 }
@@ -82,13 +59,4 @@ func LoadConfig() {
 	}
 
 	Cfg = &cfg
-}
-
-func randomJWTSecret(length int) string {
-	b := make([]byte, length)
-	_, err := rand.Read(b)
-	if err != nil {
-		log.Fatalf("не удалось сгенерировать JWT секрет: %v", err)
-	}
-	return hex.EncodeToString(b)
 }
