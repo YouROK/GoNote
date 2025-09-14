@@ -2,6 +2,15 @@
 <html lang="ru">
 <head>
     {{template "head.go.html"}}
+
+    <style>
+        .char-counter {
+            margin-top: 8px;
+            font-size: 14px;
+            color: gray;
+            transition: color 0.3s, opacity 0.3s;
+        }
+    </style>
 </head>
 <body>
 <div class="page">
@@ -12,6 +21,7 @@
         <div id="editor">
             {{.content}}
         </div>
+        <div class="char-counter" id="charCounter">0 / 1000000</div>
     </div>
 
     <div class="sidebar">
@@ -39,6 +49,8 @@
 
 <script>
     const icons = Quill.import('ui/icons');
+    const charCounter = document.getElementById('charCounter');
+    const LIMIT = 1000000;
 
     icons['myImage'] = `
 <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -160,6 +172,22 @@
 
         img.src = text;
     });
+
+    function updateCounter() {
+        const len = quill.root.innerHTML.length;
+        charCounter.textContent = `${len} / ${LIMIT}`;
+
+        if (len > LIMIT) {
+            charCounter.style.color = "red";
+            charCounter.style.opacity = 1;
+        } else {
+            charCounter.style.color = "gray";
+            charCounter.style.opacity = Math.min(len / LIMIT,1.0);
+        }
+    }
+
+    quill.on('text-change', updateCounter);
+    updateCounter();
 </script>
 <script>
     const passBtn = document.getElementById('passBtn');

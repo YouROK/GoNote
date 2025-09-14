@@ -2,6 +2,20 @@
 <html lang="ru">
 <head>
     {{template "head.go.html"}}
+
+    <meta name="description" content="{{.note.Title}} — {{if .note.Author}}Автор: {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
+    <meta name="keywords" content="заметка, блог, статьи, GoNote, {{.note.Author}}">
+    <link rel="canonical" href="http://gonote.ru/note/{{.note.ID}}">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{.note.Title}}">
+    <meta property="og:description" content="{{if .note.Author}}Автор: {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
+    <meta property="og:url" content="{{if .note}}http://gonote.ru/note/{{.note.ID}}{{else}}http://gonote.ru{{end}}">
+    <meta property="og:site_name" content="GoNote">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{.note.Title}}">
+    <meta name="twitter:description" content="{{if .note.Author}}Автор: {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
 </head>
 <body>
 <div class="page">
@@ -19,6 +33,7 @@
 
     <div class="sidebar">
         <button class="pub-btn" id="copyBtn">Copy Link</button>
+        <button class="pub-btn" id="shareBtn">Share</button>
         {{if or .hasEdit .hasPass}}
             <button class="pub-btn" id="editBtn">Edit</button>
         {{end}}
@@ -34,6 +49,8 @@
 </div>
 <script>
     const copyBtn = document.getElementById("copyBtn");
+    const shareBtn = document.getElementById("shareBtn");
+
     copyBtn.addEventListener("click", () => {
         const link = window.location.href; // текущая ссылка
         navigator.clipboard.writeText(link).then(() => {
@@ -44,6 +61,25 @@
             setTimeout(() => copyBtn.textContent = "Copy Link", 1500);
         });
     });
+
+    if (navigator.share) {
+        shareBtn.addEventListener("click", async () => {
+            const link = window.location.href;
+            const title = document.querySelector(".header-title")?.textContent || "GoNote";
+
+            try {
+                await navigator.share({
+                    title: title,
+                    text: "GoNote:",
+                    url: link,
+                });
+            } catch (err) {
+                console.log("Share canceled:", err);
+            }
+        });
+    } else {
+        shareBtn.style.display = "none";
+    }
 
     new Quill('#editor', {
         readOnly: true,
@@ -112,5 +148,27 @@
     });
 </script>
 {{end}}
+
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{.note.Title}}",
+  "author": {
+    "@type": "Person",
+    "name": "{{.note.Author}}"
+  },
+  "datePublished": "{{.note.CreatedAt.Format "2006-01-02"}}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "GoNote",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{.BaseURL}}/static/logo.png"
+    }
+  }
+}
+</script>
+
 </body>
 </html>
