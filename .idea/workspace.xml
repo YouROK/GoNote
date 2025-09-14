@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="add db">
+    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="update">
+      <change beforePath="$PROJECT_DIR$/.idea/GoNote.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GoNote.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/temp/pubnote.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/pubnote.go.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/temp/all_notes.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/all_notes.go.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +45,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
+    "Go Build.gen.executor": "Run",
+    "Go Build.go build GoNote/cmd/gen.executor": "Run",
     "Go Build.go build GoNote/cmd/main.executor": "Debug",
     "Go Build.go build GoNote/cmd/test.executor": "Debug",
     "Go Build.main.executor": "Debug",
@@ -54,24 +57,57 @@
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "SHELLCHECK.PATH": "/home/yourok/.local/share/JetBrains/GoLand2025.2/Shell Script/shellcheck",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/yourok/project/golang/GoNote/web/temp",
+    "last_opened_file_path": "/home/yourok/project/golang/cute",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
     "settings.editor.selected.configurable": "Template Data Languages",
     "ts.external.directory.path": "/home/yourok/GoLand/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/web/pages" />
       <recent name="$PROJECT_DIR$/web" />
     </key>
   </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="GoApplicationRunConfiguration" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="GoApplicationRunConfiguration">
+          <value>
+            <map>
+              <entry key="go build GoNote/cmd/gen" value="STOPPED" />
+              <entry key="main" value="FAILED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="RunManager" selected="Go Build.main">
+    <configuration name="go build GoNote/cmd/gen" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="GoNote" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="GoNote/cmd/gen" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/cmd/gen/gen.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="GoNote" />
       <working_directory value="$PROJECT_DIR$" />
@@ -81,23 +117,14 @@
       <filePath value="$PROJECT_DIR$/cmd/main/main.go" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
-      <module name="GoNote" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="GoNote/cmd/test" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/test/main.go" />
-      <method v="2" />
-    </configuration>
     <list>
+      <item itemvalue="Go Build.go build GoNote/cmd/gen" />
       <item itemvalue="Go Build.main" />
-      <item itemvalue="Go Build.test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.main" />
-        <item itemvalue="Go Build.test" />
+        <item itemvalue="Go Build.go build GoNote/cmd/gen" />
       </list>
     </recent_temporary>
   </component>
@@ -123,9 +150,32 @@
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add" />
-    <MESSAGE value="add db" />
-    <option name="LAST_COMMIT_MESSAGE" value="add db" />
+    <MESSAGE value="add rus lang" />
+    <MESSAGE value="add utils" />
+    <MESSAGE value="expired sessions" />
+    <MESSAGE value="rem" />
+    <MESSAGE value="rem assets" />
+    <MESSAGE value="add release" />
+    <MESSAGE value="fix formula and view" />
+    <MESSAGE value="add publish and other" />
+    <MESSAGE value="add expired sessions" />
+    <MESSAGE value="rem unused" />
+    <MESSAGE value="rem logg" />
+    <MESSAGE value="fix port" />
+    <MESSAGE value="add metrica" />
+    <MESSAGE value="add build" />
+    <MESSAGE value="add icons" />
+    <MESSAGE value="add head" />
+    <MESSAGE value="add static" />
+    <MESSAGE value="add gen static" />
+    <MESSAGE value="add copy btn" />
+    <MESSAGE value="add sitemap" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="rename" />
+    <MESSAGE value="add all notes" />
+    <MESSAGE value="rem gin release" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
