@@ -13,4 +13,5 @@ func (ws *WebServer) SetupRoutesPages() {
 	all.POST("/note/:noteID/pub", pages.PublishNote)
 
 	all.GET("/sitemap.xml", pages.Sitemap)
+	all.GET("/allnotes", pages.AllNotes)
 }

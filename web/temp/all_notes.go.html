@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>All Notes – GoNote</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        a.note-link { display: block; margin-bottom: 12px; font-size: 18px; color: #333; text-decoration: none; }
+        a.note-link:hover { text-decoration: underline; color: #007aff; }
+        .page {
+            display: flex;
+            justify-content: center;
+            margin: 30px 20px;
+            gap: 40px;
+        }
+        .content {
+            flex-grow: 1;
+            max-width: 680px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="content">
+            <h1>All Notes</h1>
+            {{range .notes}}
+                <a class="note-link" href="/note/{{.ID}}">{{.Title}} - {{.Author}} · {{.UpdatedAt.Format "January 02, 2006"}}</a><br>
+            {{else}}
+                <p>No notes yet.</p>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>
