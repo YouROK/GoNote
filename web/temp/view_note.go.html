@@ -18,6 +18,7 @@
     </div>
 
     <div class="sidebar">
+        <button class="pub-btn" id="copyBtn">Copy Link</button>
         {{if or .hasEdit .hasPass}}
             <button class="pub-btn" id="editBtn">Edit</button>
         {{end}}
@@ -32,6 +33,18 @@
     </div>
 </div>
 <script>
+    const copyBtn = document.getElementById("copyBtn");
+    copyBtn.addEventListener("click", () => {
+        const link = window.location.href; // текущая ссылка
+        navigator.clipboard.writeText(link).then(() => {
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => copyBtn.textContent = "Copy Link", 1500);
+        }).catch(err => {
+            copyBtn.textContent = "Error Copy";
+            setTimeout(() => copyBtn.textContent = "Copy Link", 1500);
+        });
+    });
+
     new Quill('#editor', {
         readOnly: true,
         theme: 'bubble',
