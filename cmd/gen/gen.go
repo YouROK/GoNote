@@ -101,7 +101,7 @@ func RouteStaticFiles(route *gin.Engine) {
 			fmime = "image/vnd.microsoft.icon"
 		}
 		embedStr += `
-	route.GET("` + strings.TrimPrefix(link, "/img") + `", func(c *gin.Context) {
+	route.GET("` + link + `", func(c *gin.Context) {
 		etag := fmt.Sprintf("%x", md5.Sum(` + fmap[link] + `))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
