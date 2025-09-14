@@ -3,6 +3,7 @@ package web
 import (
 	"GoNote/config"
 	"GoNote/storage/fstorage"
+	template "GoNote/web/static"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,7 @@ func (ws *WebServer) Run() {
 
 	ws.r.Use(ws.SessionMiddleware())
 	ws.r.LoadHTMLGlob("web/temp/*")
+	template.RouteStaticFiles(ws.r)
 	ws.SetupRoutesPages()
 	ws.r.Run(config.Cfg.Server.Host + ":" + strconv.Itoa(config.Cfg.Server.Port))
 }
