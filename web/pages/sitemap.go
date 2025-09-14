@@ -4,6 +4,7 @@ import (
 	"GoNote/storage/fstorage"
 	"encoding/xml"
 	"net/http"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,4 +49,22 @@ func Sitemap(c *gin.Context) {
 
 	c.Header("Content-Type", "application/xml")
 	c.XML(http.StatusOK, sitemap)
+}
+
+func AllNotes(c *gin.Context) {
+	store := c.MustGet("store").(*fstorage.FileStore)
+
+	notes, err := store.ListNotes()
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Error listing notes: %v", err)
+		return
+	}
+
+	sort.Slice(notes, func(i, j int) bool {
+		return notes[i].UpdatedAt.After(notes[j].UpdatedAt)
+	})
+
+	c.HTML(http.StatusOK, "all_notes.go.html", gin.H{
+		"notes": notes,
+	})
 }

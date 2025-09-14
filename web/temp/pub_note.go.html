@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <title>{{if .note}}{{.note.Title}} - GoNote{{else}}GoNote{{end}}</title>
+    
     {{template "head.go.html"}}
 
     <style>

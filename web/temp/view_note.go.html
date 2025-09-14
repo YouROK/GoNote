@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <title>{{if .note}}{{.note.Title}} - GoNote{{else}}GoNote{{end}}</title>
+
     {{template "head.go.html"}}
 
     <meta name="description" content="{{.note.Title}} — {{if .note.Author}}Автор: {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
