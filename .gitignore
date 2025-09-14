@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 /db/
 /app.log
+/dist/
+/web/temp/metrika.go.html
