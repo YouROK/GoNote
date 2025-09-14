@@ -222,14 +222,14 @@ func PublishNote(c *gin.Context) {
 	// Запоминаем в сессии заметку
 	exists := false
 	for _, id := range sess.Notes {
-		if id == noteID {
+		if id == note.ID {
 			exists = true
 			break
 		}
 	}
 
 	if !exists {
-		sess.Notes = append(sess.Notes, noteID)
+		sess.Notes = append(sess.Notes, note.ID)
 		store.SaveSession(sess)
 	}
 
