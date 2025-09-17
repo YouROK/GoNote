@@ -7,14 +7,14 @@
 
     <meta name="description" content="{{.note.Title}} — {{if .note.Author}}Автор: {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
     <meta name="keywords" content="заметка, блог, статьи, GoNote, {{.note.Author}}">
-    <link rel="canonical" href="http://gonote.ru/note/{{.note.ID}}">
+    <link rel="canonical" href="https://gonote.ru/note/{{.note.ID}}">
 
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{.note.Title}}">
     <meta property="og:description" content="{{if .note.Author}}Автор: {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
-    <meta property="og:url" content="{{if .note}}http://gonote.ru/note/{{.note.ID}}{{else}}http://gonote.ru{{end}}">
+    <meta property="og:url" content="{{if .note}}https://gonote.ru/note/{{.note.ID}}{{else}}https://gonote.ru{{end}}">
     <meta property="og:site_name" content="GoNote">
-    <meta property="og:image" content="http://gonote.ru/banner.png" />
+    <meta property="og:image" content="https://gonote.ru/banner.png" />
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{.note.Title}}">
