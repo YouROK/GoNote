@@ -70,32 +70,44 @@
     const charCounter = document.getElementById('charCounter');
     const LIMIT = 1000000;
 
-    icons['myImage'] = `
-<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <!-- Верхняя линия -->
-  <line class="ql-stroke" x1="3" y1="4" x2="15" y2="4"></line>
-  <!-- Левая линия -->
-  <line class="ql-stroke" x1="3" y1="4" x2="3" y2="14"></line>
-  <!-- Правая линия (не до конца) -->
-  <line class="ql-stroke" x1="15" y1="4" x2="15" y2="7"></line>
-  <!-- Нижняя линия (не до конца) -->
-  <line class="ql-stroke" x1="3" y1="14" x2="7" y2="14"></line>
+    icons['image-link'] = `
+        <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <!-- Верхняя линия -->
+          <line class="ql-stroke" x1="3" y1="4" x2="15" y2="4"></line>
+          <!-- Левая линия -->
+          <line class="ql-stroke" x1="3" y1="4" x2="3" y2="14"></line>
+          <!-- Правая линия (не до конца) -->
+          <line class="ql-stroke" x1="15" y1="4" x2="15" y2="7"></line>
+          <!-- Нижняя линия (не до конца) -->
+          <line class="ql-stroke" x1="3" y1="14" x2="7" y2="14"></line>
 
-  <!-- Солнце -->
-  <circle class="ql-fill" cx="6" cy="7" r="1"></circle>
+          <!-- Солнце -->
+          <circle class="ql-fill" cx="6" cy="7" r="1"></circle>
 
-  <!-- Иконка ссылки -->
-  <g transform="scale(0.8) translate(7,7)">
-    <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line>
-    <path class="ql-even ql-stroke"
-          d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path>
-    <path class="ql-even ql-stroke"
-          d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path>
-  </g>
-</svg>
-`;
+          <!-- Иконка ссылки -->
+          <g transform="scale(0.8) translate(7,7)">
+            <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line>
+            <path class="ql-even ql-stroke"
+                  d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path>
+            <path class="ql-even ql-stroke"
+                  d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path>
+          </g>
+        </svg>`;
 
-    const myImageButton = 'myImage';
+    icons['hr'] = `
+        <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+            <line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"></line>
+        </svg>`;
+
+    const BlockEmbed = Quill.import('blots/block/embed');
+
+    class HrBlot extends BlockEmbed {
+    }
+    HrBlot.blotName = 'hr';
+    HrBlot.tagName = 'hr';
+
+    Quill.register(HrBlot);
+
     const quill = new Quill('#editor', {
         theme: 'bubble',
         modules: {
@@ -103,7 +115,7 @@
                 container: [
                     ['bold', 'italic', 'underline', 'strike'],
                     ['blockquote', 'code-block'],
-                    ['link', 'image', myImageButton, 'video', 'formula'],
+                    ['link', 'image', 'image-link', 'video', 'formula'],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
                     [{ 'script': 'sub'}, { 'script': 'super' }],
                     [{ 'indent': '-1'}, { 'indent': '+1' }],
@@ -112,10 +124,19 @@
                     [{ 'color': [] }, { 'background': [] }],
                     [{ 'font': [] }],
                     [{ 'align': [] }],
-                    ['clean'] // Здесь добавлена запятая
+                    ['hr'],
+                    ['clean']
                 ],
                 handlers: {
-                    [myImageButton]: function() {
+                    'hr': function() {
+                        const range = this.quill.getSelection(true);
+                        if (range && range.length > 0) {
+                            quill.deleteText(range.index, range.length);
+                        }
+                        quill.insertEmbed(range.index, 'hr', true, Quill.sources.USER);
+                        quill.setSelection(range.index + 1);
+                    },
+                    'image-link': function() {
                         const tooltip = this.quill.theme.tooltip;
 
                         tooltip.edit('image', '');
