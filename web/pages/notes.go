@@ -1,10 +1,10 @@
 package pages
 
 import (
-	"GoNote/utils"
 	"html/template"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +12,7 @@ import (
 	"GoNote/storage/fstorage"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rainycape/unidecode"
 )
 
 // HandleNote выдаёт страницу заметки
@@ -190,14 +191,19 @@ func PublishNote(c *gin.Context) {
 	// Новая заметка
 	if note == nil {
 		// Подбираем уникальный id
+		i := 0
 		id := ""
 		for {
-			id = utils.RandStr(8)
+			id = unidecode.Unidecode(req.Title) + time.Now().Format("_01_02")
+			if i > 0 {
+				id += "_" + strconv.Itoa(i)
+			}
+
 			if n, _, _ := store.GetNote(id); n == nil {
 				break
 			}
+			i++
 		}
-
 		note = &models.Note{
 			ID:        id,
 			CreatedAt: time.Now(),
