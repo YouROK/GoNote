@@ -21,7 +21,7 @@ Visit [https://gonote.ru](https://gonote.ru) to explore GoNote and test all its 
  ---
 
 ## Installation & Running
-
+# You need install Golang [https://go.dev/doc/install](https://go.dev/doc/install)
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/gonote.git
