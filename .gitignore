@@ -34,3 +34,5 @@ go.work.sum
 /app.log
 /dist/
 /web/temp/metrika.go.html
+/config.yaml
+/gonote

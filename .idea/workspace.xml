@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="update">
-      <change beforePath="$PROJECT_DIR$/.idea/GoNote.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GoNote.iml" afterDir="false" />
+    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="add counter and fix bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/temp/all_notes.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/all_notes.go.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/web/routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/temp/edit_note.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/edit_note.go.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/temp/head.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/head.go.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/temp/view_note.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/view_note.go.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +55,7 @@
     "Go Build.go build GoNote/cmd/gen.executor": "Run",
     "Go Build.go build GoNote/cmd/main.executor": "Debug",
     "Go Build.go build GoNote/cmd/test.executor": "Debug",
+    "Go Build.gonote.executor": "Debug",
     "Go Build.main.executor": "Debug",
     "Go Build.test.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -60,7 +67,7 @@
     "SHELLCHECK.PATH": "/home/yourok/.local/share/JetBrains/GoLand2025.2/Shell Script/shellcheck",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/yourok/project/golang/cute",
+    "last_opened_file_path": "/home/yourok/project/golang/GoNote",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -91,14 +98,14 @@
           <value>
             <map>
               <entry key="go build GoNote/cmd/gen" value="STOPPED" />
-              <entry key="main" value="FAILED" />
+              <entry key="gonote" value="FAILED" />
             </map>
           </value>
         </entry>
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.main">
+  <component name="RunManager" selected="Go Build.gonote">
     <configuration name="go build GoNote/cmd/gen" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="GoNote" />
       <working_directory value="$PROJECT_DIR$" />
@@ -108,22 +115,23 @@
       <filePath value="$PROJECT_DIR$/cmd/gen/gen.go" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+    <configuration name="gonote" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="GoNote" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <package value="GoNote/cmd/main" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$/cmd/main/main.go" />
+      <output_directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Go Build.go build GoNote/cmd/gen" />
-      <item itemvalue="Go Build.main" />
+      <item itemvalue="Go Build.gonote" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.main" />
+        <item itemvalue="Go Build.gonote" />
         <item itemvalue="Go Build.go build GoNote/cmd/gen" />
       </list>
     </recent_temporary>
@@ -150,22 +158,6 @@
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add rus lang" />
-    <MESSAGE value="add utils" />
-    <MESSAGE value="expired sessions" />
-    <MESSAGE value="rem" />
-    <MESSAGE value="rem assets" />
-    <MESSAGE value="add release" />
-    <MESSAGE value="fix formula and view" />
-    <MESSAGE value="add publish and other" />
-    <MESSAGE value="add expired sessions" />
-    <MESSAGE value="rem unused" />
-    <MESSAGE value="rem logg" />
-    <MESSAGE value="fix port" />
-    <MESSAGE value="add metrica" />
-    <MESSAGE value="add build" />
-    <MESSAGE value="add icons" />
-    <MESSAGE value="add head" />
     <MESSAGE value="add static" />
     <MESSAGE value="add gen static" />
     <MESSAGE value="add copy btn" />
@@ -174,8 +166,24 @@
     <MESSAGE value="rename" />
     <MESSAGE value="add all notes" />
     <MESSAGE value="rem gin release" />
+    <MESSAGE value="update head" />
     <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
+    <MESSAGE value="fix sessions on new note" />
+    <MESSAGE value="update icons" />
+    <MESSAGE value="add banner" />
+    <MESSAGE value="change" />
+    <MESSAGE value="add og and desc" />
+    <MESSAGE value="add divider" />
+    <MESSAGE value="note transliter" />
+    <MESSAGE value="http to https og" />
+    <MESSAGE value="add page not found" />
+    <MESSAGE value="change routes" />
+    <MESSAGE value="add anti spam" />
+    <MESSAGE value="refactor" />
+    <MESSAGE value="change layout" />
+    <MESSAGE value="add counter" />
+    <MESSAGE value="add counter and fix bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="add counter and fix bug" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
