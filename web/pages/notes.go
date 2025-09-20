@@ -1,7 +1,12 @@
 package pages
 
 import (
+	"GoNote/config"
+	"GoNote/utils"
+	"crypto/md5"
+	"encoding/hex"
 	"html/template"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -14,6 +19,37 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rainycape/unidecode"
 )
+
+func incrementCounter(c *gin.Context, noteID string, store *fstorage.FileStore) int {
+	h := md5.Sum([]byte(noteID))
+	cookieName := "note_" + hex.EncodeToString(h[:]) + "_viewed"
+
+	// Проверяем наличие cookie
+	_, err := c.Cookie(cookieName)
+
+	if err != nil {
+		// cookie нет → увеличиваем счётчик
+		count, err := store.IncrementCounter(noteID)
+		if err != nil {
+			log.Println("Error increment counter:", err)
+			return 1
+		}
+
+		// ставим cookie на 1 час
+		c.SetCookie(cookieName, "1", config.Cfg.Counter.TTLSeconds, "/", "", false, true)
+
+		return count.Count
+	}
+
+	// cookie есть → просто возвращаем текущее значение
+	count, err := store.GetCounter(noteID)
+	if err != nil {
+		log.Println("Error get counter:", err)
+		return 1
+	}
+
+	return count.Count
+}
 
 // NotePage выдаёт страницу заметки
 func NotePage(c *gin.Context) {
@@ -33,11 +69,14 @@ func NotePage(c *gin.Context) {
 	hasEdit := contains(sess.Notes, noteID)
 	hasPass := note.Password != ""
 
+	counter := incrementCounter(c, noteID, store)
+
 	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
 		"note":    note,
 		"content": template.HTML(content),
 		"hasEdit": hasEdit,
 		"hasPass": hasPass,
+		"counter": counter,
 	})
 }
 
@@ -186,7 +225,13 @@ func NewNote(c *gin.Context) {
 	i := 0
 	id := ""
 	for {
-		id = unidecode.Unidecode(req.Title) + time.Now().Format("_01_02")
+		title := req.Title
+		title = utils.Sanitize(title)
+		if len(title) < 3 {
+			//после очистки длина получилась меньше, пользователь ввел недопустимый title пример "..."
+			title = "note"
+		}
+		id = unidecode.Unidecode(title) + time.Now().Format("_01_02")
 		if i > 0 {
 			id += "_" + strconv.Itoa(i)
 		}
