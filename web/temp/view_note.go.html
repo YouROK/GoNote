@@ -5,25 +5,24 @@
 
     {{template "head.go.html"}}
 
-    <meta name="description" content="{{.note.Title}} — {{if .note.Author}}Автор: {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
-    <meta name="keywords" content="заметка, блог, статьи, GoNote, {{.note.Author}}">
+    <meta name="description" content="{{.note.Title}} — {{if .note.Author}} {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
+    <meta name="keywords" content="заметки, блог, статьи, инструкции, GoNote {{.note.Author}}">
     <link rel="canonical" href="https://gonote.ru/note/{{.note.ID}}">
 
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{.note.Title}}">
-    <meta property="og:description" content="{{if .note.Author}}Автор: {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
+    <meta property="og:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
     <meta property="og:url" content="{{if .note}}https://gonote.ru/note/{{.note.ID}}{{else}}https://gonote.ru{{end}}">
     <meta property="og:site_name" content="GoNote">
     <meta property="og:image" content="https://gonote.ru/banner.png" />
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{.note.Title}}">
-    <meta name="twitter:description" content="{{if .note.Author}}Автор: {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
+    <meta name="twitter:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
     <meta name="twitter:card" content="summary_large_image" />
 </head>
 <body>
 <div class="page">
-    <div class="left-sidebar"></div>
     <div class="content">
         <div class="header">
             <h1 class="header-title">{{.note.Title}}</h1>
@@ -33,14 +32,14 @@
         <div id="editor">
             {{.content}}
         </div>
-    </div>
 
-    <div class="sidebar">
-        <button class="pub-btn" id="copyBtn">Copy Link</button>
-        <button class="pub-btn" id="shareBtn">Share</button>
-        {{if or .hasEdit .hasPass}}
-            <button class="pub-btn" id="editBtn">Edit</button>
-        {{end}}
+        <div class="sidebar">
+            <button class="pub-btn" id="copyBtn">Copy Link</button>
+            <button class="pub-btn" id="shareBtn">Share</button>
+            {{if or .hasEdit .hasPass}}
+                <button class="pub-btn" id="editBtn">Edit</button>
+            {{end}}
+        </div>
     </div>
 </div>
 

@@ -32,7 +32,6 @@
 </head>
 <body>
 <div class="page">
-    <div class="left-sidebar"></div>
     <div class="content">
         <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
         <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
@@ -40,12 +39,16 @@
             {{.content}}
         </div>
         <div class="char-counter" id="charCounter">0 / 1000000</div>
+
+
+        <div class="sidebar">
+            <button class="pub-btn" id="pubBtn">Publish</button>
+            <button class="pub-btn" id="passBtn">Publish Password</button>
+            <div class="msg-box" id="msgBox"></div>
+        </div>
     </div>
 
-    <div class="sidebar">
-        <button class="pub-btn" id="pubBtn">Publish</button>
-        <button class="pub-btn" id="passBtn">Publish Password</button>
-    </div>
+
 </div>
 
 <!-- Модальное окно для предупреждения о пароле -->
@@ -68,7 +71,7 @@
 <script>
     const icons = Quill.import('ui/icons');
     const charCounter = document.getElementById('charCounter');
-    const LIMIT = 1000000;
+    const LIMIT_NOTE = 1000000;
 
     icons['image-link'] = `
         <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -212,23 +215,70 @@
         img.src = text;
     });
 
+    updateCounter();
     function updateCounter() {
         const len = quill.root.innerHTML.length;
-        charCounter.textContent = `${len} / ${LIMIT}`;
+        charCounter.textContent = `Limit note size: ${len} / ${LIMIT_NOTE}`;
 
-        if (len > LIMIT) {
+        if (len > LIMIT_NOTE) {
             charCounter.style.color = "red";
             charCounter.style.opacity = 1;
         } else {
             charCounter.style.color = "gray";
-            charCounter.style.opacity = Math.min(len / LIMIT,1.0);
+            charCounter.style.opacity = Math.min(len / LIMIT_NOTE,1.0);
         }
     }
 
-    quill.on('text-change', updateCounter);
-    updateCounter();
-</script>
-<script>
+    quill.on('text-change', () => {
+        updateCounter();
+        saveAll();
+    });
+
+//////////////////
+//// utils
+    function showMessage(text, duration = 2000) {
+        const msgBox = document.getElementById('msgBox');
+        msgBox.textContent = text;
+        msgBox.classList.add('show');
+
+        // Сброс предыдущего таймера, если есть
+        if (msgBox.hideTimeout) clearTimeout(msgBox.hideTimeout);
+
+        msgBox.hideTimeout = setTimeout(() => {
+            msgBox.classList.remove('show');
+        }, duration);
+    }
+
+
+    //////////////////
+//// save content
+
+    const STORAGE_KEY = "gonote-editor-content";
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        const data = JSON.parse(saved);
+        document.querySelector('.title-input').value = data.title || "";
+        document.querySelector('.meta-input').value = data.author || "";
+        quill.root.innerHTML = data.content || "";
+        updateCounter();
+    }
+
+    function saveAll() {
+        const data = {
+            title: document.querySelector('.title-input').value,
+            author: document.querySelector('.meta-input').value,
+            content: quill.root.innerHTML
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    document.querySelector('.title-input').addEventListener('input', saveAll);
+    document.querySelector('.meta-input').addEventListener('input', saveAll);
+
+//////////////////
+//// publish
+
     const passBtn = document.getElementById('passBtn');
     const pubBtn = document.getElementById('pubBtn');
     const pubModal = document.getElementById('pubModal');
@@ -241,11 +291,29 @@
         const author = document.querySelector('.meta-input').value;
         const content = quill.root.innerHTML;
 
-        if (!content){
+        if (!title) {
+            showMessage("Title cannot be empty");
             return;
         }
 
-        fetch(`/note/${noteID}/pub`, {
+        if (title.length < 3) {
+            showMessage("Title is too small");
+            return;
+        }
+
+        if (content.length > LIMIT_NOTE) {
+            showMessage("Content exceeds maximum size!");
+            return;
+        }
+
+        if (!content || content.length === 0 || quill.root.innerText.trim().length === 0) {
+            showMessage("Content cannot be empty");
+            return;
+        }
+
+        {{if .note}}let link = "/edit/"+noteID;{{else}}let link = "/new";{{end}}
+
+        fetch(link, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({title, author, content, password:pass})
@@ -253,9 +321,10 @@
             .then(res => res.json())
             .then(data => {
                 if (data.ok) {
+                    localStorage.removeItem(STORAGE_KEY);
                     window.location.href = `/note/`+data.noteID;
                 } else {
-                    alert('Error: ' + (data.error || 'Unknown error'));
+                    showMessage(data.error || 'Unknown error');
                 }
             });
     }
@@ -289,6 +358,5 @@
         }
     });
 </script>
-
 </body>
 </html>
