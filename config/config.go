@@ -22,6 +22,12 @@ type Config struct {
 	Counter struct {
 		TTLSeconds int `yaml:"ttl_seconds"` // Время жизни cookie для счётчика
 	} `yaml:"counter"`
+
+	TGBot struct {
+		Token        string  `yaml:"token"`
+		StartMessage string  `yaml:"start_message"`
+		AdminIds     []int64 `yaml:"admin_ids"`
+	}
 }
 
 var Cfg *Config
@@ -36,6 +42,10 @@ func defaultConfig() *Config {
 	cfg.Antispam.WindowSec = 30
 
 	cfg.Counter.TTLSeconds = 3600
+
+	cfg.TGBot.Token = ""
+	cfg.TGBot.StartMessage = "Hi! 👋\nI'm the GoNote bot for receiving complaint notifications from the website"
+	cfg.TGBot.AdminIds = make([]int64, 0)
 
 	return cfg
 }

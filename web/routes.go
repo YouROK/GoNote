@@ -14,6 +14,8 @@ func (ws *WebServer) SetupRoutesPages() {
 	all.POST("/edit/:noteID", pages.EditNote)
 	all.POST("/note/:noteID/checkpass", SpamProtectionMiddleware(), pages.CheckNotePassword)
 
+	all.POST("/report", SpamProtectionMiddleware(), pages.TGBotReport)
+
 	all.GET("/sitemap.xml", pages.Sitemap)
 	all.GET("/allnotes", pages.AllNotes)
 
