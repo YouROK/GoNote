@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>404 — Страница не найдена — GoNote</title>
+
+    {{template "head.go.html"}}
+
+    <meta name="description" content="Страница не найдена — GoNote">
+    <meta name="robots" content="noindex, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="404 — GoNote">
+    <meta property="og:description" content="К сожалению, такой страницы не существует">
+    <meta property="og:url" content="https://gonote.ru/404">
+    <meta property="og:site_name" content="GoNote">
+    <meta property="og:image" content="https://gonote.ru/banner.png" />
+
+    <style>
+        .notfound {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .notfound h1 {
+            font-size: 32px;
+            margin: 0;
+        }
+        .notfound p {
+            font-size: 20px;
+            margin: 10px 0 20px;
+        }
+        .notfound p a {
+            color: #42bc89;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .notfound p a:hover {
+            text-decoration: underline;
+        }
+        .notfound .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: #42bc89;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .notfound .btn:hover {
+            background: #36a678;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="left-sidebar"></div>
+    <div class="content">
+        <div class="notfound">
+            <h1>404</h1>
+            <p>Такой страницы точно нет…<br>Зато ты можешь создать свою на
+                <a href="/">GoNote</a></p>
+            <a href="/" class="btn">Создать заметку</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+    </div>
+</div>
+</body>
+</html>
