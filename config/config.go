@@ -18,6 +18,10 @@ type Config struct {
 		MaxRequests int `yaml:"max_requests"`
 		WindowSec   int `yaml:"window_sec"`
 	} `yaml:"antispam"`
+
+	Counter struct {
+		TTLSeconds int `yaml:"ttl_seconds"` // Время жизни cookie для счётчика
+	} `yaml:"counter"`
 }
 
 var Cfg *Config
@@ -30,6 +34,8 @@ func defaultConfig() *Config {
 
 	cfg.Antispam.MaxRequests = 10
 	cfg.Antispam.WindowSec = 30
+
+	cfg.Counter.TTLSeconds = 3600
 
 	return cfg
 }
