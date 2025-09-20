@@ -39,7 +39,7 @@ You need install Golang [https://go.dev/doc/install](https://go.dev/doc/install)
    ```
 5. Open in your browser:
    ```
-   http://localhost:8080
+   http://localhost:8095
    ```
 
  ---
