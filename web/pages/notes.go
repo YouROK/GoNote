@@ -2,8 +2,8 @@ package pages
 
 import (
 	"html/template"
-	"math/rand"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -15,8 +15,8 @@ import (
 	"github.com/rainycape/unidecode"
 )
 
-// HandleNote выдаёт страницу заметки
-func HandleNote(c *gin.Context) {
+// NotePage выдаёт страницу заметки
+func NotePage(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
 	store := c.MustGet("store").(*fstorage.FileStore)
 
@@ -71,7 +71,6 @@ func CheckNotePassword(c *gin.Context) {
 	}
 
 	if note.Password == "" {
-		time.Sleep(time.Millisecond * time.Duration(2000+rand.Intn(1000)))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "note is read only"})
 		return
 	}
@@ -93,11 +92,10 @@ func CheckNotePassword(c *gin.Context) {
 		return
 	}
 
-	time.Sleep(time.Millisecond * time.Duration(2000+rand.Intn(1000)))
 	c.JSON(http.StatusUnauthorized, gin.H{"ok": false, "error": "invalid password"})
 }
 
-func EditNote(c *gin.Context) {
+func EditNotePage(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
 	store := c.MustGet("store").(*fstorage.FileStore)
 
@@ -127,101 +125,90 @@ func EditNote(c *gin.Context) {
 	acceptLanguage := c.GetHeader("Accept-Language")
 	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
 
-	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
+	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
 		"note":      note,
 		"content":   template.HTML(content),
 		"isRussian": isRussian,
 	})
 }
 
-func PublishNote(c *gin.Context) {
+type reqAddUpdNote struct {
+	Title    string `json:"title"`
+	Author   string `json:"author"`
+	Content  string `json:"content"`
+	Password string `json:"password"`
+}
+
+func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
+	// Парсим данные из запроса
+	var req *reqAddUpdNote
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
+		return nil, false
+	}
+
+	// Проверяем лимиты пропуска
+	if len(req.Title) < 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Title is too small"})
+		return nil, false
+	}
+
+	if len(req.Content) > 1000000 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
+		return nil, false
+	}
+
+	if len(req.Content) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
+		return nil, false
+	}
+
+	if isEmptyContent(req.Content) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
+		return nil, false
+	}
+	return req, true
+}
+
+func NewNote(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
 	store := c.MustGet("store").(*fstorage.FileStore)
 
 	var note *models.Note
 	var err error
 
-	// Парсим данные из запроса
-	var req struct {
-		Title    string `json:"title"`
-		Author   string `json:"author"`
-		Content  string `json:"content"`
-		Password string `json:"password"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+	req, ok := checkAddUpdNote(c)
+	if !ok {
 		return
 	}
 
-	noteID := c.Param("noteID")
-	isNewNote := noteID == "new"
-
-	if !isNewNote {
-		// Обновляем заметку
-
-		// Смотрим, может ли пользователь редактировать
-		hasAccess := false
-		for _, id := range sess.Notes {
-			if id == noteID {
-				hasAccess = true
-				break
-			}
+	// Подбираем уникальный id
+	i := 0
+	id := ""
+	for {
+		id = unidecode.Unidecode(req.Title) + time.Now().Format("_01_02")
+		if i > 0 {
+			id += "_" + strconv.Itoa(i)
 		}
 
-		// Проверяем пароль
-		note, _, err = store.GetNote(noteID)
-		if err != nil || note == nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "note not found"})
-			return
+		if n, _, _ := store.GetNote(id); n == nil {
+			break
 		}
-		if !hasAccess && note.Password != "" && req.Password != note.Password {
-			// Пользователь не может редактировать и в заметке задан пароль и не совпадает
-			time.Sleep(time.Millisecond * time.Duration(4000+rand.Intn(1000)))
-			// Хреновая защита от подбора, нужно запросы от ip блокировать на время
-			c.JSON(http.StatusForbidden, gin.H{"error": "wrong password"})
-			return
-		}
-
-		if !hasAccess && (note.Password == "" || req.Password != note.Password) {
-			c.JSON(http.StatusForbidden, gin.H{"error": "no access"})
-			return
-		}
+		i++
 	}
-
-	// Новая заметка
-	if note == nil {
-		// Подбираем уникальный id
-		i := 0
-		id := ""
-		for {
-			id = unidecode.Unidecode(req.Title) + time.Now().Format("_01_02")
-			if i > 0 {
-				id += "_" + strconv.Itoa(i)
-			}
-
-			if n, _, _ := store.GetNote(id); n == nil {
-				break
-			}
-			i++
-		}
-		note = &models.Note{
-			ID:        id,
-			CreatedAt: time.Now(),
-		}
+	note = &models.Note{
+		ID:        id,
+		Author:    req.Author,
+		Title:     req.Title,
+		Password:  req.Password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
-
-	// Обновляем поля
-	note.Title = req.Title
-	note.Author = req.Author
-	if req.Password != "" {
-		note.Password = req.Password
-	}
-	note.UpdatedAt = time.Now()
 
 	// Сохраняем заметку
 	err = store.UpdateNote(note, req.Content)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save note"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
 		return
 	}
 
@@ -240,4 +227,100 @@ func PublishNote(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"ok": true, "noteID": note.ID})
+}
+
+func EditNote(c *gin.Context) {
+	sess := c.MustGet("session").(*models.Session)
+	store := c.MustGet("store").(*fstorage.FileStore)
+
+	var note *models.Note
+	var err error
+
+	req, ok := checkAddUpdNote(c)
+	if !ok {
+		return
+	}
+
+	noteID := c.Param("noteID")
+
+	// Смотрим, может ли пользователь редактировать
+	hasAccess := false
+	for _, id := range sess.Notes {
+		if id == noteID {
+			hasAccess = true
+			break
+		}
+	}
+
+	// Проверяем пароль
+	note, _, err = store.GetNote(noteID)
+	if err != nil || note == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Note not found"})
+		return
+	}
+	if !hasAccess && note.Password != "" && req.Password != note.Password {
+		// Пользователь не может редактировать и в заметке задан пароль и не совпадает
+		c.JSON(http.StatusForbidden, gin.H{"error": "wrong password"})
+		return
+	}
+
+	if !hasAccess && (note.Password == "" || req.Password != note.Password) {
+		// Нет в сессии, пароль пустой или не совпадает
+		c.JSON(http.StatusForbidden, gin.H{"error": "No access"})
+		return
+	}
+
+	// Обновляем поля
+	note.Title = req.Title
+	note.Author = req.Author
+	if req.Password != "" {
+		note.Password = req.Password
+	}
+	note.UpdatedAt = time.Now()
+
+	// Сохраняем заметку
+	err = store.UpdateNote(note, req.Content)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
+		return
+	}
+
+	// Запоминаем в сессии заметку
+	exists := false
+	for _, id := range sess.Notes {
+		if id == note.ID {
+			exists = true
+			break
+		}
+	}
+
+	if !exists {
+		sess.Notes = append(sess.Notes, note.ID)
+		store.SaveSession(sess)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"ok": true, "noteID": note.ID})
+}
+
+func isEmptyContent(html string) bool {
+	if html == "" {
+		return true
+	}
+
+	// 1. Если есть хотя бы <img>, <hr>, .ql-formula или <video>, считаем не пустым
+	reVisual := regexp.MustCompile(`(?i)<(img|hr|video|a)|class="ql-formula"`)
+	if reVisual.MatchString(html) {
+		return false
+	}
+
+	// 2. Убираем все теги
+	reTags := regexp.MustCompile(`<[^>]*>`)
+	text := reTags.ReplaceAllString(html, "")
+
+	// 3. Убираем HTML-сущности и пробелы
+	text = strings.ReplaceAll(text, "\u00a0", "") // &nbsp;
+	text = strings.TrimSpace(text)
+
+	// 4. Если после очистки текста ничего не осталось, контент пустой
+	return len(text) == 0
 }

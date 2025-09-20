@@ -8,11 +8,11 @@ import (
 )
 
 // Главная страница
-func HandleIndex(c *gin.Context) {
+func IndexPage(c *gin.Context) {
 	acceptLanguage := c.GetHeader("Accept-Language")
 	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
 
-	c.HTML(http.StatusOK, "pub_note.go.html", gin.H{
+	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
 		"note":      nil,
 		"content":   "",
 		"isRussian": isRussian,
