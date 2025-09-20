@@ -13,6 +13,11 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"server"`
+
+	Antispam struct {
+		MaxRequests int `yaml:"max_requests"`
+		WindowSec   int `yaml:"window_sec"`
+	} `yaml:"antispam"`
 }
 
 var Cfg *Config
@@ -22,6 +27,9 @@ func defaultConfig() *Config {
 
 	cfg.Server.Host = "0.0.0.0"
 	cfg.Server.Port = 8095
+
+	cfg.Antispam.MaxRequests = 10
+	cfg.Antispam.WindowSec = 30
 
 	return cfg
 }
@@ -38,25 +46,25 @@ func LoadConfig() {
 	filename := filepath.Join(filepath.Dir(os.Args[0]), "config.yaml")
 
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// создаём файл с настройками по умолчанию
 		cfg := defaultConfig()
 		if err := SaveConfig(filename, cfg); err != nil {
-			log.Fatalf("не удалось создать config.yaml: %v", err)
+			log.Fatalf("failed to create config.yaml: %v", err)
 		}
-		log.Printf("создан config.yaml с настройками по умолчанию")
+		log.Printf("config.yaml created with default settings")
 		Cfg = cfg
 		return
 	}
 
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		log.Fatalf("не удалось прочитать файл настроек: %v", err)
+		log.Fatalf("failed to read config file: %v", err)
 	}
 
 	var cfg Config
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		log.Fatalf("ошибка разбора настроек: %v", err)
+		log.Fatalf("failed to parse config: %v", err)
 	}
 
 	Cfg = &cfg
+	log.Printf("config.yaml loaded successfully")
 }
