@@ -2,20 +2,24 @@ package web
 
 import (
 	"GoNote/config"
-	"GoNote/storage/fstorage"
+	"GoNote/storage"
 	template "GoNote/web/static"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type WebServer struct {
-	store *fstorage.FileStore
+	store storage.Store
 	r     *gin.Engine
 }
 
 func NewServer() *WebServer {
-	store := fstorage.NewFileStore("db")
+	store, err := storage.NewStore(storage.SQLITE_STORE, "db")
+	if err != nil {
+		log.Fatal("Error create db:", err)
+	}
 	return &WebServer{store: store}
 }
 
