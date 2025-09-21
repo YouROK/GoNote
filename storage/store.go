@@ -1,37 +1,38 @@
 package storage
 
-import "GoNote/models"
+import (
+	"GoNote/models"
+	"GoNote/storage/fstorage"
+	"GoNote/storage/sstorage"
+)
 
-// Интерфейс для работы со страницами
-type NoteStore interface {
-	CreatePage(uid string, p *models.Note) error
-	GetPage(uid, pageID string) (*models.Note, error)
-	UpdatePage(uid string, p *models.Note) error
-	DeletePage(uid, pageID string) error
-	ListPages(uid string) ([]*models.Note, error) // все страницы пользователя
-	ListAllPages() ([]*models.Note, error)        // все страницы всех пользователей (для админа)
+const FS_STORE = 0
+const SQLITE_STORE = 1
 
-	SavePageContent(uid, pageID, content string) error
-	LoadPageContent(uid, pageID string) (string, error)
-
-	SaveAsset(uid, pageID, filename string, data []byte) error
-	LoadAsset(uid, pageID, filename string) ([]byte, error)
-	ListAssets(uid, pageID string) ([]string, error)
-	DeleteAsset(uid, pageID, filename string) error
+func NewStore(typeStor int, dir string) (Store, error) {
+	if typeStor == FS_STORE {
+		return fstorage.NewFileStore(dir), nil
+	} else {
+		return sstorage.NewSQLiteStore(dir)
+	}
 }
 
-// Интерфейс для работы с сессиями
-type SessionStore interface {
-	CreateSession(uid string) (string, error)
-	DeleteSession(uid string) error
-	GetSession(uid string) (string, error)
+type Store interface {
+	// ---- Работа с заметками ----
+	CreateNote(n *models.Note, content string) error
+	GetNote(noteID string) (*models.Note, string, error)
+	UpdateNote(n *models.Note, content string) error
+	DeleteNote(noteID string) error
+	ListNotes() ([]*models.Note, error)
 
-	LoadSession(uid string) (string, error)
-	SaveSession(uid, token string) error
-}
+	// ---- Работа с сессиями ----
+	CreateSession() (*models.Session, error)
+	LoadSession(sessionID string) (*models.Session, error)
+	SaveSession(sess *models.Session) error
+	DeleteSession(sessionID string) error
+	SessionExists(sessionID string) bool
 
-// Интерфейс для работы с счетчиками
-type CounterStore interface {
+	// ---- Работа со счетчиком просмотров ----
 	GetCounterViews(noteID string) (*models.Counter, error)
 	IncrementCounterViews(noteID string) (*models.Counter, error)
 }

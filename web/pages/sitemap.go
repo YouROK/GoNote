@@ -1,7 +1,7 @@
 package pages
 
 import (
-	"GoNote/storage/fstorage"
+	"GoNote/storage"
 	"encoding/xml"
 	"net/http"
 	"sort"
@@ -23,7 +23,7 @@ type Url struct {
 }
 
 func Sitemap(c *gin.Context) {
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	notes, err := store.ListNotes()
 	if err != nil {
@@ -52,7 +52,7 @@ func Sitemap(c *gin.Context) {
 }
 
 func AllNotes(c *gin.Context) {
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	notes, err := store.ListNotes()
 	if err != nil {

@@ -2,6 +2,7 @@ package pages
 
 import (
 	"GoNote/config"
+	"GoNote/storage"
 	"GoNote/utils"
 	"crypto/md5"
 	"encoding/hex"
@@ -14,13 +15,12 @@ import (
 	"time"
 
 	"GoNote/models"
-	"GoNote/storage/fstorage"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rainycape/unidecode"
 )
 
-func incrementCounter(c *gin.Context, noteID string, store *fstorage.FileStore) int {
+func incrementCounter(c *gin.Context, noteID string, store storage.Store) int {
 	h := md5.Sum([]byte(noteID))
 	cookieName := "note_" + hex.EncodeToString(h[:]) + "_viewed"
 
@@ -54,7 +54,7 @@ func incrementCounter(c *gin.Context, noteID string, store *fstorage.FileStore) 
 // NotePage выдаёт страницу заметки
 func NotePage(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	// Получаем noteID из URL
 	noteID := c.Param("noteID")
@@ -91,7 +91,7 @@ func contains(slice []string, item string) bool {
 
 func CheckNotePassword(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	noteID := c.Param("noteID")
 
@@ -136,7 +136,7 @@ func CheckNotePassword(c *gin.Context) {
 
 func EditNotePage(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	noteID := c.Param("noteID")
 
@@ -211,7 +211,7 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 
 func NewNote(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	var note *models.Note
 	var err error
@@ -276,7 +276,7 @@ func NewNote(c *gin.Context) {
 
 func EditNote(c *gin.Context) {
 	sess := c.MustGet("session").(*models.Session)
-	store := c.MustGet("store").(*fstorage.FileStore)
+	store := c.MustGet("store").(storage.Store)
 
 	var note *models.Note
 	var err error
