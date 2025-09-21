@@ -2,24 +2,14 @@ package storage
 
 import "GoNote/models"
 
-// Интерфейс для работы с пользователями
-//type UserStore interface {
-//	CreateUser(u *models.User) error
-//	GetUser(uid string) (*models.User, error)
-//	UpdateUser(u *models.User) error
-//	DeleteUser(uid string) error
-//	UserExists(uid string) bool
-//	ListUsers() ([]*models.User, error) // для админки
-//}
-
 // Интерфейс для работы со страницами
-type PageStore interface {
-	CreatePage(uid string, p *models.Page) error
-	GetPage(uid, pageID string) (*models.Page, error)
-	UpdatePage(uid string, p *models.Page) error
+type NoteStore interface {
+	CreatePage(uid string, p *models.Note) error
+	GetPage(uid, pageID string) (*models.Note, error)
+	UpdatePage(uid string, p *models.Note) error
 	DeletePage(uid, pageID string) error
-	ListPages(uid string) ([]*models.Page, error) // все страницы пользователя
-	ListAllPages() ([]*models.Page, error)        // все страницы всех пользователей (для админа)
+	ListPages(uid string) ([]*models.Note, error) // все страницы пользователя
+	ListAllPages() ([]*models.Note, error)        // все страницы всех пользователей (для админа)
 
 	SavePageContent(uid, pageID, content string) error
 	LoadPageContent(uid, pageID string) (string, error)
@@ -38,4 +28,10 @@ type SessionStore interface {
 
 	LoadSession(uid string) (string, error)
 	SaveSession(uid, token string) error
+}
+
+// Интерфейс для работы с счетчиками
+type CounterStore interface {
+	GetCounterViews(noteID string) (*models.Counter, error)
+	IncrementCounterViews(noteID string) (*models.Counter, error)
 }
