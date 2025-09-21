@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Note struct {
-	ID        string    `json:"id"` // хэш страницы, уникальный
+	ID        string    `json:"id"`
 	Author    string    `json:"author"`
 	Title     string    `json:"title"`
 	Password  string    `json:"password"`
