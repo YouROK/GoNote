@@ -226,12 +226,12 @@ func NewNote(c *gin.Context) {
 	id := ""
 	for {
 		title := req.Title
-		title = utils.Sanitize(title)
-		if len(title) < 3 {
-			//после очистки длина получилась меньше, пользователь ввел недопустимый title пример "..."
-			title = "note"
-		}
 		id = unidecode.Unidecode(title) + time.Now().Format("_01_02")
+		id = utils.Sanitize(id)
+		if len(id) < 3 {
+			//после очистки длина получилась меньше, пользователь ввел недопустимый title пример "..."
+			id = "note"
+		}
 		if i > 0 {
 			id += "_" + strconv.Itoa(i)
 		}
