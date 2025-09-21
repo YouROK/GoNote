@@ -66,17 +66,6 @@ func (fs *FileStore) DeleteSession(sessionID string) error {
 	return os.Remove(fs.sessionPath(sessionID))
 }
 
-// Добавляем заметку в сессию
-func (fs *FileStore) AddNoteToSession(sessionID, noteID string) error {
-	sess, err := fs.LoadSession(sessionID)
-	if err != nil {
-		return err
-	}
-
-	sess.Notes = append(sess.Notes, noteID)
-	return fs.SaveSession(sess)
-}
-
 // Проверяем, существует ли сессия
 func (fs *FileStore) SessionExists(sessionID string) bool {
 	_, err := os.Stat(fs.sessionPath(sessionID))
