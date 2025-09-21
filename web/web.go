@@ -16,7 +16,7 @@ type WebServer struct {
 }
 
 func NewServer() *WebServer {
-	store, err := storage.NewStore(storage.SQLITE_STORE, "db")
+	store, err := storage.NewStore(storage.FS_STORE, "db")
 	if err != nil {
 		log.Fatal("Error create db:", err)
 	}
