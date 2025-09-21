@@ -29,7 +29,7 @@ func incrementCounter(c *gin.Context, noteID string, store *fstorage.FileStore) 
 
 	if err != nil {
 		// cookie нет → увеличиваем счётчик
-		count, err := store.IncrementCounter(noteID)
+		count, err := store.IncrementCounterViews(noteID)
 		if err != nil {
 			log.Println("Error increment counter:", err)
 			return 1
@@ -42,7 +42,7 @@ func incrementCounter(c *gin.Context, noteID string, store *fstorage.FileStore) 
 	}
 
 	// cookie есть → просто возвращаем текущее значение
-	count, err := store.GetCounter(noteID)
+	count, err := store.GetCounterViews(noteID)
 	if err != nil {
 		log.Println("Error get counter:", err)
 		return 1
