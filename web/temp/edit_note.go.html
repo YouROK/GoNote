@@ -178,7 +178,7 @@
         placeholder: 'Your note...'
     });
 
-    quill.root.addEventListener('paste', (e) => {
+    quill.root.addEventListener('paste', async (e) => {
         const clipboardData = e.clipboardData || window.clipboardData;
         const text = clipboardData.getData('text').trim();
 
@@ -188,20 +188,40 @@
 
         const range = quill.getSelection(true) || { index: quill.getLength() };
 
-        // создаём временный объект Image для проверки, так как CORS не дает проверять через fetch
+        // Динамически определяем текущий хост
+        const currentHost = window.location.origin;
+
+        // Проверяем, что ссылка на текущий сайт
+        const siteRegex = new RegExp(`^${currentHost.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}/note/([a-zA-Z0-9_-]+)`, 'i');
+        const match = text.match(siteRegex);
+
+        if (match) {
+            const noteID = match[1];
+            try {
+                // Получаем информацию о заметке через API
+                const resp = await fetch(`${currentHost}/api/note/${noteID}`);
+                if (!resp.ok) throw new Error('Not found');
+                const data = await resp.json();
+                const title = data.title || noteID;
+
+                quill.insertText(range.index, title, { link: text });
+                quill.setSelection(range.index + title.length);
+            } catch {
+                quill.insertText(range.index, text, { link: text });
+                quill.setSelection(range.index + text.length);
+            }
+            return;
+        }
+
+        // Для внешних ссылок проверяем, картинка ли это
         const img = new Image();
         img.onload = () => {
             quill.insertEmbed(range.index, 'image', text, 'user');
             quill.setSelection(range.index + 1);
         };
         img.onerror = () => {
-            try {
-                quill.insertText(range.index, text, { link: text });
-                quill.setSelection(range.index + text.length);
-            } catch {
-                quill.insertText(range.index, text, 'user');
-                quill.setSelection(range.index + text.length);
-            }
+            quill.insertText(range.index, text, { link: text });
+            quill.setSelection(range.index + text.length);
         };
 
         img.src = text;
