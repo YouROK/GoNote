@@ -26,10 +26,11 @@
     }
 
     .content {
+        box-sizing: border-box;
         max-width: 732px;
         margin: 0 auto;
         position: relative;
-        padding: 21px 21px;
+        padding: 21px 0;
         width: 100%;
         flex-grow: 1;
     }
@@ -157,6 +158,9 @@
 
     /* Медиазапрос для мобильных устройств */
     @media (max-width: 960px) {
+        .content {
+            padding: 0 16px;
+        }
         .sidebar {
             position: static;
             width: auto;
