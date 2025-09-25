@@ -20,6 +20,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rainycape/unidecode"
+
+	"github.com/microcosm-cc/bluemonday"
 )
 
 func incrementCounter(c *gin.Context, noteID string, store storage.Store) int {
@@ -193,6 +195,10 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Title is too small"})
 		return nil, false
 	}
+
+	policy := bluemonday.UGCPolicy()
+	policy.AllowDataURIImages()
+	req.Content = policy.Sanitize(req.Content)
 
 	if len(req.Content) > 1000000 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
