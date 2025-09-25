@@ -22,7 +22,12 @@
 </head>
 <body>
 <div class="page">
-    <div class="content">
+    <aside class="sidebar-left">
+        <a href="/" class="side-btn">Home</a>
+        <a href="/new" class="side-btn">New Note</a>
+        <!-- Можно добавить список заметок позже -->
+    </aside>
+    <main class="content">
         <div class="header">
             <h1 class="header-title">{{.note.Title}}</h1>
             <span class="header-meta">{{if .note.Author}}{{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}
@@ -36,16 +41,15 @@
         <div id="editor">
             {{.content}}
         </div>
-
-        <div class="sidebar">
-            <button class="side-btn" id="copyBtn">Copy Link</button>
-            <button class="side-btn" id="shareBtn">Share</button>
-            {{if or .hasEdit .hasPass}}
-                <button class="side-btn" id="editBtn">Edit</button>
-            {{end}}
-            <button class="side-btn" id="reportBtn">Report</button>
-        </div>
-    </div>
+    </main>
+    <aside class="sidebar-right">
+        <button class="sidebar-right-btn" id="copyBtn">Copy Link</button>
+        <button class="sidebar-right-btn" id="shareBtn">Share</button>
+        {{if or .hasEdit .hasPass}}
+            <button class="sidebar-right-btn" id="editBtn">Edit</button>
+        {{end}}
+        <button class="sidebar-right-btn" id="reportBtn">Report</button>
+    </aside>
 </div>
 
 <div id="passwordModal" class="modal">

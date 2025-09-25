@@ -23,23 +23,23 @@
 </head>
 <body>
 <div class="page">
-    <div class="content">
+    <aside class="sidebar-left">
+        <a href="/" class="side-btn">Home</a>
+        <a href="/new" class="side-btn">New Note</a>
+    </aside>
+    <main class="content">
         <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
         <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
         <div id="editor">
             {{.content}}
         </div>
         <div class="char-counter" id="charCounter">0 / 1000000</div>
-
-
-        <div class="sidebar">
-            <button class="side-btn" id="pubBtn">Publish</button>
-            <button class="side-btn" id="passBtn">Publish Password</button>
-            <div class="msg-box" id="msgBox"></div>
-        </div>
-    </div>
-
-
+    </main>
+    <aside class="sidebar-right">
+        <button class="sidebar-right-btn" id="pubBtn">Publish</button>
+        <button class="sidebar-right-btn" id="passBtn">Publish Password</button>
+        <div class="msg-box" id="msgBox"></div>
+    </aside>
 </div>
 
 <!-- Модальное окно для предупреждения о пароле -->
@@ -241,9 +241,24 @@
         }
     }
 
-    quill.on('text-change', () => {
+    quill.on('text-change', (delta, oldDelta, source) => {
         updateCounter();
         saveAll();
+        if (source === 'user') {
+            const range = quill.getSelection();
+            if (range) {
+                const bounds = quill.getBounds(range.index);
+                const bottom = bounds.top + window.scrollY + bounds.height;
+                const shouldScroll = bottom > window.scrollY + window.innerHeight - 100;
+
+                if (shouldScroll) {
+                    window.scrollBy({
+                        top: bounds.height + 20,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
     });
 
 //////////////////
