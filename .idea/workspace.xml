@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="add counter and fix bug">
+    <list default="true" id="6d17c2fb-59ec-486f-b57c-5a929e8fa44e" name="Changes" comment="add header and some fix with storage">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/web/routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/temp/edit_note.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/edit_note.go.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/temp/head.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/head.go.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/temp/view_note.go.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/temp/view_note.go.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/pages/notes.go" beforeDir="false" afterPath="$PROJECT_DIR$/web/pages/notes.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,43 +38,50 @@
 }</component>
   <component name="ProjectId" id="32Sx5TudBa45oK7wPVM3HPYmwuf" />
   <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
     <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go Build.gen.executor": "Run",
-    "Go Build.go build GoNote/cmd/gen.executor": "Run",
-    "Go Build.go build GoNote/cmd/main.executor": "Debug",
-    "Go Build.go build GoNote/cmd/test.executor": "Debug",
-    "Go Build.gonote.executor": "Debug",
-    "Go Build.main.executor": "Debug",
-    "Go Build.test.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "SHELLCHECK.PATH": "/home/yourok/.local/share/JetBrains/GoLand2025.2/Shell Script/shellcheck",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/yourok/project/golang/GoNote",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "Template Data Languages",
-    "ts.external.directory.path": "/home/yourok/GoLand/plugins/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go Build.gen.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build GoNote/cmd/gen.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build GoNote/cmd/main.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build GoNote/cmd/test.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.gonote.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.main.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.test.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/home/yourok/.local/share/JetBrains/GoLand2025.2/Shell Script/shellcheck&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yourok/project/golang/GoNote/storage/sstorage&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Template Data Languages&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/yourok/GoLand/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/storage/sstorage" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -139,8 +142,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-f466f9b0953e-3d2cccfc42a2-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.25557.175" />
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-GO-252.25557.175" />
+        <option value="bundled-gosdk-f466f9b0953e-3d2cccfc42a2-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.26199.158" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-GO-252.26199.158" />
       </set>
     </attachedChunks>
   </component>
@@ -158,34 +161,45 @@
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add static" />
-    <MESSAGE value="add gen static" />
-    <MESSAGE value="add copy btn" />
-    <MESSAGE value="add sitemap" />
-    <MESSAGE value="fix" />
-    <MESSAGE value="rename" />
-    <MESSAGE value="add all notes" />
-    <MESSAGE value="rem gin release" />
-    <MESSAGE value="update head" />
-    <MESSAGE value="update" />
-    <MESSAGE value="fix sessions on new note" />
-    <MESSAGE value="update icons" />
-    <MESSAGE value="add banner" />
-    <MESSAGE value="change" />
-    <MESSAGE value="add og and desc" />
-    <MESSAGE value="add divider" />
-    <MESSAGE value="note transliter" />
-    <MESSAGE value="http to https og" />
-    <MESSAGE value="add page not found" />
     <MESSAGE value="change routes" />
     <MESSAGE value="add anti spam" />
-    <MESSAGE value="refactor" />
     <MESSAGE value="change layout" />
     <MESSAGE value="add counter" />
     <MESSAGE value="add counter and fix bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="add counter and fix bug" />
+    <MESSAGE value="add tgbot reports" />
+    <MESSAGE value="add readme" />
+    <MESSAGE value="update" />
+    <MESSAGE value="refactor and delete unused" />
+    <MESSAGE value="delete unused" />
+    <MESSAGE value="rename" />
+    <MESSAGE value="rem comments" />
+    <MESSAGE value="rem unused" />
+    <MESSAGE value="refactor" />
+    <MESSAGE value="add sql store" />
+    <MESSAGE value="change to fs" />
+    <MESSAGE value="update banner" />
+    <MESSAGE value="fix id of note" />
+    <MESSAGE value="fix style and href" />
+    <MESSAGE value="fix max scale on mobile" />
+    <MESSAGE value="fix width on mobile" />
+    <MESSAGE value="fix css" />
+    <MESSAGE value="add api" />
+    <MESSAGE value="change paste with link on self" />
+    <MESSAGE value="add header and some fix with storage" />
+    <option name="LAST_COMMIT_MESSAGE" value="add header and some fix with storage" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/storage/sstorage/note_store.go</url>
+          <line>16</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
