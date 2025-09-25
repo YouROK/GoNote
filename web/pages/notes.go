@@ -3,9 +3,11 @@ package pages
 import (
 	"GoNote/config"
 	"GoNote/storage"
+	"GoNote/tgbot"
 	"GoNote/utils"
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -271,6 +273,16 @@ func NewNote(c *gin.Context) {
 		store.SaveSession(sess)
 	}
 
+	if config.Cfg.TGBot.MsgOnNewNote {
+		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
+		message := fmt.Sprintf(
+			"Создана новая страница\n\nTitle: %s\n\nLink: %s\n\nID: %s",
+			note.Title,
+			link,
+			note.ID,
+		)
+		tgbot.SendMessageAll(message)
+	}
 	c.JSON(http.StatusOK, gin.H{"ok": true, "noteID": note.ID})
 }
 
