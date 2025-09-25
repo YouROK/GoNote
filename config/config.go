@@ -14,6 +14,10 @@ type Config struct {
 		Port int    `yaml:"port"`
 	} `yaml:"server"`
 
+	Site struct {
+		Host string `yaml:"host"`
+	} `yaml:"site"`
+
 	Antispam struct {
 		MaxRequests int `yaml:"max_requests"`
 		WindowSec   int `yaml:"window_sec"`
@@ -27,16 +31,26 @@ type Config struct {
 		Token        string  `yaml:"token"`
 		StartMessage string  `yaml:"start_message"`
 		AdminIds     []int64 `yaml:"admin_ids"`
+		MsgOnNewNote bool    `yaml:"msg_on_new_note"`
 	}
 }
 
 var Cfg *Config
 
 func defaultConfig() *Config {
+	hostname := ""
+	if h, err := os.Hostname(); err == nil {
+		hostname = h
+	} else {
+		hostname = "localhost"
+	}
+
 	cfg := &Config{}
 
 	cfg.Server.Host = "0.0.0.0"
 	cfg.Server.Port = 8095
+
+	cfg.Site.Host = hostname
 
 	cfg.Antispam.MaxRequests = 10
 	cfg.Antispam.WindowSec = 30
@@ -46,6 +60,7 @@ func defaultConfig() *Config {
 	cfg.TGBot.Token = ""
 	cfg.TGBot.StartMessage = "Hi! 👋\nI'm the GoNote bot for receiving complaint notifications from the website"
 	cfg.TGBot.AdminIds = make([]int64, 0)
+	cfg.TGBot.MsgOnNewNote = false
 
 	return cfg
 }
