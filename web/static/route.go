@@ -22,6 +22,13 @@ func RouteStaticFiles(route *gin.Engine) {
 		c.Data(200, "image/png", Filesbannerpng)
 	})
 
+	route.GET("/css/gonote.css", func(c *gin.Context) {
+		etag := fmt.Sprintf("%x", md5.Sum(Filescssgonotecss))
+		c.Header("Cache-Control", "public, max-age=31536000")
+		c.Header("ETag", etag)
+		c.Data(200, "text/css; charset=utf-8", Filescssgonotecss)
+	})
+
 	route.GET("/favicon-96x96.png", func(c *gin.Context) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesfavicon96x96png))
 		c.Header("Cache-Control", "public, max-age=31536000")
@@ -41,6 +48,27 @@ func RouteStaticFiles(route *gin.Engine) {
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
 		c.Data(200, "image/svg+xml", Filesfaviconsvg)
+	})
+
+	route.GET("/js/editor.js", func(c *gin.Context) {
+		etag := fmt.Sprintf("%x", md5.Sum(Filesjseditorjs))
+		c.Header("Cache-Control", "public, max-age=31536000")
+		c.Header("ETag", etag)
+		c.Data(200, "text/javascript; charset=utf-8", Filesjseditorjs)
+	})
+
+	route.GET("/js/shared.js", func(c *gin.Context) {
+		etag := fmt.Sprintf("%x", md5.Sum(Filesjssharedjs))
+		c.Header("Cache-Control", "public, max-age=31536000")
+		c.Header("ETag", etag)
+		c.Data(200, "text/javascript; charset=utf-8", Filesjssharedjs)
+	})
+
+	route.GET("/js/viewer.js", func(c *gin.Context) {
+		etag := fmt.Sprintf("%x", md5.Sum(Filesjsviewerjs))
+		c.Header("Cache-Control", "public, max-age=31536000")
+		c.Header("ETag", etag)
+		c.Data(200, "text/javascript; charset=utf-8", Filesjsviewerjs)
 	})
 
 	route.GET("/robots.txt", func(c *gin.Context) {
