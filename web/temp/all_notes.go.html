@@ -5,11 +5,6 @@
 
     {{template "head.go.html"}}
 
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-        a.note-link { display: block; margin-bottom: 12px; font-size: 18px; color: #333; text-decoration: none; }
-        a.note-link:hover { text-decoration: underline; color: #007aff; }
-    </style>
 </head>
 <body>
     <div class="page">
@@ -17,7 +12,7 @@
         <main class="content">
             <h1>All Notes</h1>
             {{range .notes}}
-                <a class="note-link" href="/note/{{.ID}}" target="_blank">{{.Title}} {{if .Author}}· {{.Author}}{{end}} · {{.UpdatedAt.Format "January 02, 2006"}}</a><br>
+                <a class="sidebar-right-link" href="/note/{{.ID}}" target="_blank">{{.Title}} {{if .Author}}· {{.Author}}{{end}} · {{.UpdatedAt.Format "January 02, 2006"}}</a><br>
             {{else}}
                 <p>No notes yet.</p>
             {{end}}
