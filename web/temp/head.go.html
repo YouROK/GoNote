@@ -123,7 +123,21 @@
         cursor: pointer;
         text-align: center;
         max-width: 225px !important;
-        min-width: 125px !important;
+        min-width: 125px;
+    }
+
+    .sidebar-right-link {
+        display: block;
+        padding: 5px 5px;
+        font-size: 18px;
+        color: #333;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.2s;
+    }
+    .sidebar-right-link:hover {
+        color: #007aff;
+        background: #f8f8f8;
     }
 
     #editor {
@@ -172,9 +186,9 @@
 
         .sidebar-left,
         .sidebar-right {
-            width: auto;
-            max-width: 300px;
+            width: 100%;
             padding: 1px 0;
+            align-items: center;
         }
 
         .content {
@@ -184,8 +198,14 @@
             padding-right: calc(16px + env(safe-area-inset-right));
         }
 
-        .side-btn {
+        .sidebar-right-btn {
             margin: 0 auto;
+            min-width: 200px;
+        }
+
+        .sidebar-right-link {
+            min-width: 200px;
+            text-align: center;
         }
     }
 
