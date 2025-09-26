@@ -19,7 +19,7 @@ func (ws *WebServer) SetupRoutesPages() {
 	all.POST("/report", SpamProtectionMiddleware(), pages.TGBotReport)
 
 	all.GET("/sitemap.xml", pages.Sitemap)
-	all.GET("/allnotes", pages.AllNotes)
+	all.GET("/all", pages.AllNotes)
 
 	ws.r.NoRoute(pages.NotFound)
 
