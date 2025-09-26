@@ -54,6 +54,11 @@ func GetLinkTitle(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "failed to fetch page"})
+		return
+	}
+
 	// Читаем только начало тела (до 10 КБ), чтобы не тратить память
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 10240))
 	if err != nil {
