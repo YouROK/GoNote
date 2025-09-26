@@ -1,5 +1,3 @@
-// /js/shared.js
-
 function showMessage(text, duration = 2000) {
     const msgBox = document.getElementById('msgBox');
     if (!msgBox) return;

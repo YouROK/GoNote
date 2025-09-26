@@ -38,6 +38,7 @@ body {
     flex-direction: column;
     gap: 10px;
     padding: 10px;
+    margin-top: 2em;
     box-sizing: border-box;
 }
 
@@ -114,16 +115,18 @@ body {
     min-width: 125px;
 }
 
-.sidebar-right-link {
+.sidebar-left a,
+.sidebar-left-link {
     display: block;
     padding: 5px 5px;
-    font-size: 18px;
-    color: #333;
-    text-decoration: none;
+    font-size: 1em;
+    color: #333 !important;
+    text-decoration: none !important;
     border-radius: 8px;
     transition: background 0.2s;
 }
-.sidebar-right-link:hover {
+.sidebar-left a:hover,
+.sidebar-left-link:hover {
     color: #007aff;
     background: #f8f8f8;
 }
@@ -137,10 +140,12 @@ body {
     line-height: 1.6;
 }
 
-#editor hr {
+#editor hr,
+.menu-viewer hr,
+.menu-editor hr {
+    margin: 10px 0;
     border: none;
     border-top: 1px solid #ccc;
-    margin: 12px 0;
 }
 
 .ql-editor {
@@ -340,4 +345,32 @@ body {
     font-size: 14px;
     color: gray;
     transition: color 0.3s, opacity 0.3s;
+}
+
+.menu-viewer{
+    font-family: CustomSansSerif, 'Lucida Grande', Arial, sans-serif;
+    padding: 10px;
+    border-radius: 6px;
+}
+.menu-editor {
+    font-family: CustomSansSerif, 'Lucida Grande', Arial, sans-serif;
+    padding: 9px;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.menu-viewer .ql-editor,
+.menu-editor .ql-editor {
+    padding: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    color: #333;
+    position: relative;
+}
+
+.ql-editor a {
+    overflow-wrap: anywhere !important;
+    word-break: break-all !important;
+    display: inline !important; /* сохраняет строчный контекст */
 }

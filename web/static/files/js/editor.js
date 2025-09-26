@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Константы ===
     const LIMIT_NOTE = 1000000;
+    const LIMIT_MENU = 10000;
     const STORAGE_KEY = `gonote-editor-content-${noteID}`;
 
     // === Иконки Quill ===
@@ -130,7 +131,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        placeholder: isRussian ? 'Ваша заметка...' : 'Your note...'
+        placeholder: 'Your note...'
+    });
+
+    const menuQuill = new Quill('#menu-editor', {
+        theme: 'bubble',
+        modules: {
+            toolbar: {
+                container: [
+                    ['bold', 'italic'],
+                    [{'header': [2, 3, false]}],
+                    ['link'],
+                    ['hr'],
+                    ['clean']
+                ],
+                handlers: {
+                    'hr': function () {
+                        const range = this.quill.getSelection(true);
+                        if (range && range.length > 0) {
+                            menuQuill.deleteText(range.index, range.length);
+                        }
+                        menuQuill.insertEmbed(range.index, 'hr', true, Quill.sources.USER);
+                        menuQuill.setSelection(range.index + 1);
+                    }
+                }
+            }
+        },
+        placeholder: 'Menu (links, headers...)'
+    });
+
+    menuQuill.on('selection-change', (range) => {
+        const menuContainer = document.getElementById('menu-editor');
+        if (menuContainer) {
+            if (range) {
+                // Фокус есть
+                menuContainer.style.borderColor = '#007aff';
+                menuContainer.style.background = '#fff';
+            } else {
+                // Фокус потерян
+                menuContainer.style.borderColor = '#ccc';
+                menuContainer.style.background = '#fafafa';
+                menuContainer.style.boxShadow = 'none';
+            }
+        }
     });
 
     // === Восстановление из localStorage ===
@@ -141,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             titleInput.value = data.title || initialTitle;
             authorInput.value = data.author || initialAuthor;
             if (data.content) quill.root.innerHTML = data.content;
+            if (data.menu) menuQuill.root.innerHTML = data.menu;
         } catch (e) {
             console.warn('Failed to load saved draft', e);
         }
@@ -194,12 +238,39 @@ document.addEventListener('DOMContentLoaded', () => {
         img.src = text;
     });
 
+    menuQuill.root.addEventListener('paste', async (e) => {
+        const clipboardData = e.clipboardData || window.clipboardData;
+        const text = clipboardData.getData('text').trim();
+
+        // Пропускаем, если не URL
+        if (!text || !/^https?:\/\//i.test(text)) return;
+
+        e.preventDefault();
+
+        const range = menuQuill.getSelection(true) || { index: menuQuill.getLength() };
+
+        try {
+            const encodedURL = encodeURIComponent(text);
+            const resp = await fetch(`/api/getlinktitle?url=${encodedURL}`);
+            const data = await resp.json();
+            const title = data.title || text; // если прокси вернул пусто — fallback на URL
+
+            menuQuill.insertText(range.index, title, { link: text }, Quill.sources.USER);
+            menuQuill.setSelection(range.index + title.length);
+        } catch (err) {
+            console.warn('Failed to fetch title, using URL as fallback', err);
+            // Вставляем как есть
+            menuQuill.insertText(range.index, text, { link: text }, Quill.sources.USER);
+            menuQuill.setSelection(range.index + text.length);
+        }
+    });
+
     // === Счётчик символов ===
     function updateCounter() {
         const len = quill.root.innerHTML.length;
         charCounter.textContent = `Limit note size: ${len} / ${LIMIT_NOTE}`;
         charCounter.style.color = len > LIMIT_NOTE ? 'red' : 'gray';
-        charCounter.style.opacity = len > LIMIT_NOTE ? 1 : Math.min(len / LIMIT_NOTE, 1.0);
+        charCounter.style.opacity = len > LIMIT_NOTE ? 0 : Math.min(len / LIMIT_NOTE, 1.0);
     }
 
     // === Автопрокрутка ===
@@ -220,7 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = {
             title: titleInput.value,
             author: authorInput.value,
-            content: quill.root.innerHTML
+            content: quill.root.innerHTML,
+            menu: menuQuill.root.innerHTML
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
@@ -230,18 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = titleInput.value.trim();
         const author = authorInput.value.trim();
         const content = quill.root.innerHTML;
+        const menu = menuQuill.root.innerHTML;
 
         if (!title) return GonoteUtils.showMessage(isRussian ? 'Заголовок не может быть пустым' : 'Title cannot be empty');
         if (title.length < 3) return GonoteUtils.showMessage(isRussian ? 'Заголовок слишком короткий' : 'Title is too small');
         if (!content || quill.root.innerText.trim().length === 0) return GonoteUtils.showMessage(isRussian ? 'Контент не может быть пустым' : 'Content cannot be empty');
         if (content.length > LIMIT_NOTE) return GonoteUtils.showMessage(isRussian ? 'Превышен лимит размера!' : 'Content exceeds maximum size!');
+        if (menu.length > LIMIT_MENU) return GonoteUtils.showMessage(isRussian ? 'Превышен лимит размера меню!' : 'Menu content exceeds maximum size!');
 
         const link = noteID === 'new' ? '/new' : `/edit/${noteID}`;
 
         fetch(link, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, author, content, password })
+            body: JSON.stringify({ title, author, content, menu, password })
         })
             .then(res => res.json())
             .then(data => {
@@ -263,6 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCounter();
         saveAll();
         autoScrollOnEdit(delta, oldDelta, source);
+    });
+
+    menuQuill.on('text-change', (delta, oldDelta, source) => {
+        saveAll();
     });
 
     titleInput.addEventListener('input', saveAll);

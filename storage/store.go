@@ -3,7 +3,7 @@ package storage
 import (
 	"GoNote/models"
 	"GoNote/storage/fstorage"
-	"GoNote/storage/sstorage"
+	"errors"
 )
 
 const FS_STORE = 0
@@ -12,16 +12,17 @@ const SQLITE_STORE = 1
 func NewStore(typeStor int, dir string) (Store, error) {
 	if typeStor == FS_STORE {
 		return fstorage.NewFileStore(dir), nil
-	} else {
-		return sstorage.NewSQLiteStore(dir)
+		//} else {
+		//	return sstorage.NewSQLiteStore(dir)
 	}
+	return nil, errors.New("type store not support")
 }
 
 type Store interface {
 	// ---- Работа с заметками ----
-	CreateNote(n *models.Note, content string) error
-	GetNote(noteID string) (*models.Note, string, error)
-	UpdateNote(n *models.Note, content string) error
+	CreateNote(n *models.Note, content, menu string) error
+	GetNote(noteID string) (*models.Note, string, string, error)
+	UpdateNote(n *models.Note, content, menu string) error
 	DeleteNote(noteID string) error
 	ListNotes() ([]*models.Note, error)
 

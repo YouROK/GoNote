@@ -27,4 +27,5 @@ func (ws *WebServer) SetupRoutesPages() {
 	apir := ws.r.Group("/api")
 	apir.GET("/note/:noteID", api.GetNoteApi)
 	apir.GET("/content/:noteID", api.GetNoteContentApi)
+	apir.GET("/getlinktitle", api.GetLinkTitle)
 }

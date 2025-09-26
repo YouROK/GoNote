@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
             theme: 'bubble'
         });
     }
+    const menuEl = document.getElementById('menu-editor');
+    if (editorEl) {
+        new Quill('#menu-editor', {
+            readOnly: true,
+            theme: 'bubble'
+        });
+    }
 
     // === Кнопка "Copy Link" ===
     const copyBtn = document.getElementById('copyBtn');

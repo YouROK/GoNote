@@ -64,7 +64,7 @@ func NotePage(c *gin.Context) {
 	noteID := c.Param("noteID")
 
 	// Загружаем заметку
-	note, content, err := store.GetNote(noteID)
+	note, content, menu, err := store.GetNote(noteID)
 	if err != nil {
 		c.String(http.StatusNotFound, "Заметка не найдена")
 		return
@@ -78,6 +78,7 @@ func NotePage(c *gin.Context) {
 	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
 		"note":    note,
 		"content": template.HTML(content),
+		"menu":    template.HTML(menu),
 		"hasEdit": hasEdit,
 		"hasPass": hasPass,
 		"counter": counter,
@@ -107,7 +108,7 @@ func CheckNotePassword(c *gin.Context) {
 		return
 	}
 
-	note, _, err := store.GetNote(noteID)
+	note, _, _, err := store.GetNote(noteID)
 	if err != nil || note == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "note not found"})
 		return
@@ -159,7 +160,7 @@ func EditNotePage(c *gin.Context) {
 	}
 
 	// Загружаем заметку
-	note, content, err := store.GetNote(noteID)
+	note, content, menu, err := store.GetNote(noteID)
 	if err != nil || note == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "note not found"})
 		return
@@ -171,6 +172,7 @@ func EditNotePage(c *gin.Context) {
 	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
 		"note":      note,
 		"content":   template.HTML(content),
+		"menu":      template.HTML(menu),
 		"isRussian": isRussian,
 	})
 }
@@ -179,6 +181,7 @@ type reqAddUpdNote struct {
 	Title    string `json:"title"`
 	Author   string `json:"author"`
 	Content  string `json:"content"`
+	Menu     string `json:"menu"`
 	Password string `json:"password"`
 }
 
@@ -200,8 +203,27 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	policy.AllowDataURIImages()
 	req.Content = policy.Sanitize(req.Content)
 
+	policyMenu := bluemonday.UGCPolicy()
+	policyMenu.AllowElements(
+		"h2", "h3", "h4",
+		"p",
+		"a",
+		"hr",
+		"strong", "b",
+		"em", "i",
+	)
+	policyMenu.AllowAttrs("href").OnElements("a")
+	policyMenu.RequireParseableURLs(true)
+	policyMenu.AllowURLSchemes("http", "https")
+	req.Menu = policyMenu.Sanitize(req.Menu)
+
 	if len(req.Content) > 1000000 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
+		return nil, false
+	}
+
+	if len(req.Menu) > 10000 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Menu content exceeds maximum size"})
 		return nil, false
 	}
 
@@ -214,6 +236,7 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
 		return nil, false
 	}
+
 	return req, true
 }
 
@@ -244,7 +267,7 @@ func NewNote(c *gin.Context) {
 			id += "_" + strconv.Itoa(i)
 		}
 
-		if n, _, _ := store.GetNote(id); n == nil {
+		if n, _, _, _ := store.GetNote(id); n == nil {
 			break
 		}
 		i++
@@ -259,7 +282,7 @@ func NewNote(c *gin.Context) {
 	}
 
 	// Сохраняем заметку
-	err = store.UpdateNote(note, req.Content)
+	err = store.UpdateNote(note, req.Content, req.Menu)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
 		return
@@ -316,7 +339,7 @@ func EditNote(c *gin.Context) {
 	}
 
 	// Проверяем пароль
-	note, _, err = store.GetNote(noteID)
+	note, _, _, err = store.GetNote(noteID)
 	if err != nil || note == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Note not found"})
 		return
@@ -342,7 +365,7 @@ func EditNote(c *gin.Context) {
 	note.UpdatedAt = time.Now()
 
 	// Сохраняем заметку
-	err = store.UpdateNote(note, req.Content)
+	err = store.UpdateNote(note, req.Content, req.Menu)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
 		return

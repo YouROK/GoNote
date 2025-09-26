@@ -24,6 +24,9 @@
 <body>
 <div class="page">
     <aside class="sidebar-left">
+        <div class="menu-editor" id="menu-editor">
+            {{.menu}}
+        </div>
     </aside>
     <main class="content">
         <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
