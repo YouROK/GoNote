@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container: [
                     ['bold', 'italic'],
                     [{'header': [2, 3, false]}],
+                    [{ 'align': [] }],
                     ['link'],
                     ['hr'],
                     ['clean']

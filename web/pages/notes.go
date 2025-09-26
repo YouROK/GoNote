@@ -215,6 +215,9 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	policyMenu.AllowAttrs("href").OnElements("a")
 	policyMenu.RequireParseableURLs(true)
 	policyMenu.AllowURLSchemes("http", "https")
+	policyMenu.AllowAttrs("class").Matching(
+		regexp.MustCompile(`^ql-[a-z0-9\-]+$`),
+	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
 	req.Menu = policyMenu.Sanitize(req.Menu)
 
 	if len(req.Content) > 1000000 {
