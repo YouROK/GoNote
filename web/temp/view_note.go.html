@@ -5,19 +5,19 @@
 
     {{template "head.go.html"}}
 
-    <meta name="description" content="{{.note.Title}} — {{if .note.Author}} {{.note.Author}}, {{end}}{{.note.CreatedAt.Format "02 Jan 2006"}}">
+    <meta name="description" content="{{.note.Title}} — {{if .note.Author}} {{.note.Author}}, {{end}}{{.note.UpdatedAt.Format "02 Jan 2006"}}">
     <meta name="keywords" content="заметки, блог, статьи, инструкции, GoNote {{.note.Author}}">
     <link rel="canonical" href="https://gonote.ru/note/{{.note.ID}}">
 
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{.note.Title}}">
-    <meta property="og:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
+    <meta property="og:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.UpdatedAt.Format "January 02, 2006"}}">
     <meta property="og:url" content="{{if .note}}https://gonote.ru/note/{{.note.ID}}{{else}}https://gonote.ru{{end}}">
     <meta property="og:site_name" content="GoNote">
     <meta property="og:image" content="https://gonote.ru/banner.png" />
 
     <meta name="twitter:title" content="{{.note.Title}}">
-    <meta name="twitter:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}">
+    <meta name="twitter:description" content="{{if .note.Author}} {{.note.Author}} · {{end}}{{.note.UpdatedAt.Format "January 02, 2006"}}">
     <meta name="twitter:card" content="summary_large_image" />
 </head>
 <body>
@@ -30,7 +30,7 @@
     <main class="content">
         <div class="header">
             <h1 class="header-title">{{.note.Title}}</h1>
-            <span class="header-meta">{{if .note.Author}}{{.note.Author}} · {{end}}{{.note.CreatedAt.Format "January 02, 2006"}}
+            <span class="header-meta">{{if .note.Author}}{{.note.Author}} · {{end}}{{.note.UpdatedAt.Format "January 02, 2006"}}
                     · <svg style="vertical-align: middle; margin-bottom: 3px" xmlns="http://www.w3.org/2000/svg" class="icon icon-eye" width="16" height="16" viewBox="0 0 20 20" fill="#b6b8bf">
                         <g fill-rule="evenodd" clip-rule="evenodd" fill="#b6b8bf"><path d="M14.152 10.5c0 2.439-1.862 4.423-4.152 4.423-2.285 0-4.144-1.984-4.144-4.423 0-2.443 1.859-4.43 4.144-4.43 2.29 0 4.152 1.987 4.152 4.43Zm5.303-1.361C17.662 7.314 14.047 4.25 10 4.25c-4.053 0-7.661 3.063-9.453 4.89-.353.358-.55.85-.547 1.36 0 .518.194 1.002.547 1.36C2.34 13.686 5.954 16.75 10 16.75c4.054 0 7.664-3.064 9.455-4.89.352-.36.545-.842.545-1.361 0-.517-.194-1-.545-1.359"></path><path d="M12.5 10.503A2.503 2.503 0 0 1 9.996 13 2.502 2.502 0 0 1 7.5 10.503 2.502 2.502 0 0 1 9.996 8a2.504 2.504 0 0 1 2.504 2.503Z"></path></g>
                     </svg>
@@ -108,7 +108,7 @@
     "@type": "Person",
     "name": "{{.note.Author}}"
   },
-  "datePublished": "{{.note.CreatedAt.Format "2006-01-02"}}",
+  "datePublished": "{{.note.UpdatedAt.Format "2006-01-02"}}",
   "publisher": {
     "@type": "Organization",
     "name": "GoNote",
