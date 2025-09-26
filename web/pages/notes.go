@@ -201,6 +201,9 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 
 	policy := bluemonday.UGCPolicy()
 	policy.AllowDataURIImages()
+	policy.AllowAttrs("class").Matching(
+		regexp.MustCompile(`^ql-[a-z0-9\-]+$`),
+	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
 	req.Content = policy.Sanitize(req.Content)
 
 	policyMenu := bluemonday.UGCPolicy()
