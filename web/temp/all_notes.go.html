@@ -12,7 +12,7 @@
         <main class="content">
             <h1>All Notes</h1>
             {{range .notes}}
-                <a class="sidebar-left-link" href="/note/{{.ID}}" target="_blank">{{.Title}} {{if .Author}}· {{.Author}}{{end}} · {{.UpdatedAt.Format "January 02, 2006"}} / {{.UpdatedAt.Format "January 02, 2006"}}</a><br>
+                <a class="sidebar-left-link" href="/note/{{.ID}}" target="_blank">{{.Title}} {{if .Author}}· {{.Author}}{{end}} · {{.UpdatedAt.Format "January 02, 2006"}} / {{.CreatedAt.Format "January 02, 2006"}}</a><br>
             {{else}}
                 <p>No notes yet.</p>
             {{end}}
