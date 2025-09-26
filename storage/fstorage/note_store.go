@@ -61,7 +61,7 @@ func (fs *FileStore) GetNote(noteID string) (*models.Note, string, string, error
 	// Читаем menu.md
 	menuPath := filepath.Join(notePath, "menu.md")
 	menu, err := os.ReadFile(menuPath)
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return nil, "", "", err
 	}
 
