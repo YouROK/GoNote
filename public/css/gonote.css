@@ -370,7 +370,7 @@ body {
 }
 
 .ql-editor a {
+    white-space: normal !important;
     overflow-wrap: anywhere !important;
-    word-break: break-all !important;
-    display: inline !important; /* сохраняет строчный контекст */
+    word-break: break-word !important;
 }
