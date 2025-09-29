@@ -28,10 +28,11 @@ type Config struct {
 	} `yaml:"counter"`
 
 	TGBot struct {
-		Token        string  `yaml:"token"`
-		StartMessage string  `yaml:"start_message"`
-		AdminIds     []int64 `yaml:"admin_ids"`
-		MsgOnNewNote bool    `yaml:"msg_on_new_note"`
+		Token         string  `yaml:"token"`
+		StartMessage  string  `yaml:"start_message"`
+		AdminIds      []int64 `yaml:"admin_ids"`
+		MsgOnNewNote  bool    `yaml:"msg_on_new_note"`
+		MsgOnEditNote bool    `yaml:"msg_on_edit_note"`
 	}
 }
 
@@ -61,6 +62,7 @@ func defaultConfig() *Config {
 	cfg.TGBot.StartMessage = "Hi! 👋\nI'm the GoNote bot for receiving complaint notifications from the website"
 	cfg.TGBot.AdminIds = make([]int64, 0)
 	cfg.TGBot.MsgOnNewNote = false
+	cfg.TGBot.MsgOnEditNote = false
 
 	return cfg
 }

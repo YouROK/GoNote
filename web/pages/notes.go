@@ -334,7 +334,7 @@ func NewNote(c *gin.Context) {
 	if config.Cfg.TGBot.MsgOnNewNote {
 		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
 		message := fmt.Sprintf(
-			"Создана новая страница\n\nTitle: %s\n\nLink: %s\n\nID: %s",
+			"Создана новая заметка\n\nTitle: %s\n\nLink: %s\n\nID: %s",
 			note.Title,
 			link,
 			note.ID,
@@ -412,6 +412,17 @@ func EditNote(c *gin.Context) {
 	if !exists {
 		sess.Notes = append(sess.Notes, note.ID)
 		store.SaveSession(sess)
+	}
+
+	if config.Cfg.TGBot.MsgOnEditNote {
+		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
+		message := fmt.Sprintf(
+			"Отредактирована заметка\n\nTitle: %s\n\nLink: %s\n\nID: %s",
+			note.Title,
+			link,
+			note.ID,
+		)
+		tgbot.SendMessageAll(message)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"ok": true, "noteID": note.ID})
