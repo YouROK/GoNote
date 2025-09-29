@@ -5,7 +5,6 @@ import (
 	"GoNote/storage"
 	"GoNote/tgbot"
 	"GoNote/utils"
-	"GoNote/web/sanitizer"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -198,41 +197,27 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 		return nil, false
 	}
 
-	// ================================
-	// Сначала чистим inline style в span (KaTeX)
-	// ================================
-	req.Content = sanitizer.SanitizeStyleAttrs(req.Content, "span")
-
-	// ================================
-	// Политика белого списка для контента
-	// ================================
-	policy := bluemonday.NewPolicy()
-
-	// Текстовые теги
-	policy.AllowElements(
-		"p", "h1", "h2", "h3", "h4",
-		"strong", "b", "em", "i",
-		"ul", "ol", "li",
-		"hr", "br", "a", "img", "video",
-	)
-	policy.AllowAttrs("href").OnElements("a")
-	policy.RequireParseableURLs(true)
-	policy.AllowURLSchemes("http", "https")
-	policy.AllowAttrs("src", "alt", "title").OnElements("img")
-	policy.AllowAttrs("controls", "autoplay", "loop").OnElements("video")
+	policy := bluemonday.UGCPolicy()
 	policy.AllowDataURIImages()
 
-	// KaTeX / MathML
-	policy.AllowElements("span")
-	policy.AllowElements("math", "mrow", "mi", "mo", "msup", "mn", "semantics", "annotation")
-	policy.AllowAttrs("class", "data-value", "contenteditable", "aria-hidden", "style").OnElements("span")
-	policy.AllowAttrs("xmlns", "encoding").OnElements("math", "annotation")
+	policy.AllowAttrs("class").Matching(
+		regexp.MustCompile(`^ql-[a-z0-9\-]+$`),
+	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
+
+	policy.AllowAttrs("style").OnElements("span")
+
+	policy.AllowAttrs("class", "data-value", "contenteditable", "aria-hidden").OnElements("span")
+	policy.AllowElements("span", "math", "mrow", "mi", "mo", "msup", "mn", "semantics", "annotation")
+	policy.AllowAttrs("xmlns").OnElements("math")
+	policy.AllowAttrs("encoding").OnElements("annotation")
+
+	policy.AllowElements("iframe")
+	policy.AllowAttrs("class", "frameborder", "allowfullscreen", "src").OnElements("iframe")
+	policy.RequireParseableURLs(true)
+	policy.AllowURLSchemes("https")
 
 	req.Content = policy.Sanitize(req.Content)
 
-	// ================================
-	// Политика для меню (обычный whitelist)
-	// ================================
 	policyMenu := bluemonday.UGCPolicy()
 	policyMenu.AllowElements(
 		"h2", "h3", "h4",
@@ -248,9 +233,6 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
 	req.Menu = policyMenu.Sanitize(req.Menu)
 
-	// ================================
-	// Ограничения по размеру
-	// ================================
 	if len(req.Content) > 1000000 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
 		return nil, false
