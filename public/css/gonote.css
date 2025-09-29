@@ -200,6 +200,10 @@ body {
         min-width: 200px;
         text-align: center;
     }
+
+    .menu-editor {
+        min-width: 200px;
+    }
 }
 
 /* --- Модальное окно --- */
