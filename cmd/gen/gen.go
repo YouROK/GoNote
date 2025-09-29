@@ -105,6 +105,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(` + fmap[link] + `))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "` + fmime + `", ` + fmap[link] + `)
 	})
 `

@@ -12,6 +12,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesappletouchiconpng))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/png", Filesappletouchiconpng)
 	})
 
@@ -19,6 +23,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesbannerpng))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/png", Filesbannerpng)
 	})
 
@@ -26,6 +34,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filescssgonotecss))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "text/css; charset=utf-8", Filescssgonotecss)
 	})
 
@@ -33,6 +45,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesfavicon96x96png))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/png", Filesfavicon96x96png)
 	})
 
@@ -40,6 +56,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesfaviconico))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/vnd.microsoft.icon", Filesfaviconico)
 	})
 
@@ -47,6 +67,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesfaviconsvg))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/svg+xml", Filesfaviconsvg)
 	})
 
@@ -54,6 +78,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesjseditorjs))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "text/javascript; charset=utf-8", Filesjseditorjs)
 	})
 
@@ -61,6 +89,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesjssharedjs))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "text/javascript; charset=utf-8", Filesjssharedjs)
 	})
 
@@ -68,6 +100,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesjsviewerjs))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "text/javascript; charset=utf-8", Filesjsviewerjs)
 	})
 
@@ -75,6 +111,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filesrobotstxt))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "text/plain; charset=utf-8", Filesrobotstxt)
 	})
 
@@ -82,6 +122,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Filessitewebmanifest))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "application/manifest+json", Filessitewebmanifest)
 	})
 
@@ -89,6 +133,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Fileswebappmanifest192x192png))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/png", Fileswebappmanifest192x192png)
 	})
 
@@ -96,6 +144,10 @@ func RouteStaticFiles(route *gin.Engine) {
 		etag := fmt.Sprintf("%x", md5.Sum(Fileswebappmanifest512x512png))
 		c.Header("Cache-Control", "public, max-age=31536000")
 		c.Header("ETag", etag)
+		if match := c.GetHeader("If-None-Match"); match == etag {
+			c.Status(304)
+			return
+		}
 		c.Data(200, "image/png", Fileswebappmanifest512x512png)
 	})
 }
