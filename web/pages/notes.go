@@ -5,6 +5,7 @@ import (
 	"GoNote/storage"
 	"GoNote/tgbot"
 	"GoNote/utils"
+	"GoNote/web/sanitizer"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -186,32 +187,56 @@ type reqAddUpdNote struct {
 }
 
 func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
-	// Парсим данные из запроса
 	var req *reqAddUpdNote
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
 		return nil, false
 	}
 
-	// Проверяем лимиты пропуска
 	if len(req.Title) < 3 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Title is too small"})
 		return nil, false
 	}
 
-	policy := bluemonday.UGCPolicy()
+	// ================================
+	// Сначала чистим inline style в span (KaTeX)
+	// ================================
+	req.Content = sanitizer.SanitizeStyleAttrs(req.Content, "span")
+
+	// ================================
+	// Политика белого списка для контента
+	// ================================
+	policy := bluemonday.NewPolicy()
+
+	// Текстовые теги
+	policy.AllowElements(
+		"p", "h1", "h2", "h3", "h4",
+		"strong", "b", "em", "i",
+		"ul", "ol", "li",
+		"hr", "br", "a", "img", "video",
+	)
+	policy.AllowAttrs("href").OnElements("a")
+	policy.RequireParseableURLs(true)
+	policy.AllowURLSchemes("http", "https")
+	policy.AllowAttrs("src", "alt", "title").OnElements("img")
+	policy.AllowAttrs("controls", "autoplay", "loop").OnElements("video")
 	policy.AllowDataURIImages()
-	policy.AllowAttrs("class").Matching(
-		regexp.MustCompile(`^ql-[a-z0-9\-]+$`),
-	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
+
+	// KaTeX / MathML
+	policy.AllowElements("span")
+	policy.AllowElements("math", "mrow", "mi", "mo", "msup", "mn", "semantics", "annotation")
+	policy.AllowAttrs("class", "data-value", "contenteditable", "aria-hidden", "style").OnElements("span")
+	policy.AllowAttrs("xmlns", "encoding").OnElements("math", "annotation")
+
 	req.Content = policy.Sanitize(req.Content)
 
+	// ================================
+	// Политика для меню (обычный whitelist)
+	// ================================
 	policyMenu := bluemonday.UGCPolicy()
 	policyMenu.AllowElements(
 		"h2", "h3", "h4",
-		"p",
-		"a",
-		"hr",
+		"p", "a", "hr",
 		"strong", "b",
 		"em", "i",
 	)
@@ -223,6 +248,9 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	).OnElements("p", "h2", "h3", "h4", "ol", "ul", "li")
 	req.Menu = policyMenu.Sanitize(req.Menu)
 
+	// ================================
+	// Ограничения по размеру
+	// ================================
 	if len(req.Content) > 1000000 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
 		return nil, false
@@ -233,12 +261,7 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 		return nil, false
 	}
 
-	if len(req.Content) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
-		return nil, false
-	}
-
-	if isEmptyContent(req.Content) {
+	if len(req.Content) == 0 || isEmptyContent(req.Content) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
 		return nil, false
 	}
