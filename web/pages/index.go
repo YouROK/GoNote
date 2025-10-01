@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"GoNote/config"
 	"net/http"
 	"strings"
 
@@ -13,8 +14,9 @@ func IndexPage(c *gin.Context) {
 	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
 
 	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
-		"note":      nil,
-		"content":   "",
-		"isRussian": isRussian,
+		"note":                      nil,
+		"content":                   "",
+		"isRussian":                 isRussian,
+		"disablePasswordPublishing": config.Cfg.Features.DisablePasswordPublishing,
 	})
 }

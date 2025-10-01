@@ -38,7 +38,9 @@
     </main>
     <aside class="sidebar-right">
         <button class="sidebar-right-btn" id="pubBtn">Publish</button>
+        {{ if not .disablePasswordPublishing }}
         <button class="sidebar-right-btn" id="passBtn">Publish Password</button>
+        {{end}}
         <div class="msg-box" id="msgBox"></div>
     </aside>
 </div>

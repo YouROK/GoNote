@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"GoNote/config"
 	"GoNote/tgbot"
 	"fmt"
 	"log"
@@ -17,6 +18,10 @@ type ReportRequest struct {
 }
 
 func TGBotReport(c *gin.Context) {
+	if config.Cfg.Features.DisableReportButton {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Disabled on site"})
+		return
+	}
 	var req ReportRequest
 
 	// Парсим JSON тело запроса

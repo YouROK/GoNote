@@ -71,17 +71,18 @@ func NotePage(c *gin.Context) {
 	}
 
 	hasEdit := contains(sess.Notes, noteID)
-	hasPass := note.Password != ""
+	hasPass := note.Password != "" && !config.Cfg.Features.DisablePasswordPublishing
 
 	counter := incrementCounter(c, noteID, store)
 
 	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
-		"note":    note,
-		"content": template.HTML(content),
-		"menu":    template.HTML(menu),
-		"hasEdit": hasEdit,
-		"hasPass": hasPass,
-		"counter": counter,
+		"note":                note,
+		"content":             template.HTML(content),
+		"menu":                template.HTML(menu),
+		"hasEdit":             hasEdit,
+		"hasPass":             hasPass,
+		"counter":             counter,
+		"disableReportButton": config.Cfg.Features.DisableReportButton,
 	})
 }
 
@@ -170,10 +171,11 @@ func EditNotePage(c *gin.Context) {
 	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
 
 	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
-		"note":      note,
-		"content":   template.HTML(content),
-		"menu":      template.HTML(menu),
-		"isRussian": isRussian,
+		"note":                      note,
+		"content":                   template.HTML(content),
+		"menu":                      template.HTML(menu),
+		"isRussian":                 isRussian,
+		"disablePasswordPublishing": config.Cfg.Features.DisablePasswordPublishing,
 	})
 }
 
@@ -283,6 +285,11 @@ func NewNote(c *gin.Context) {
 		}
 		i++
 	}
+
+	if config.Cfg.Features.DisablePasswordPublishing {
+		req.Password = ""
+	}
+
 	note = &models.Note{
 		ID:        id,
 		Author:    req.Author,
@@ -347,6 +354,10 @@ func EditNote(c *gin.Context) {
 			hasAccess = true
 			break
 		}
+	}
+
+	if config.Cfg.Features.DisablePasswordPublishing {
+		req.Password = ""
 	}
 
 	// Проверяем пароль

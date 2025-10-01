@@ -48,7 +48,9 @@
         {{if or .hasEdit .hasPass}}
             <button class="sidebar-right-btn" id="editBtn">Edit</button>
         {{end}}
+        {{ if not .disableReportButton }}
         <button class="sidebar-right-btn" id="reportBtn">Report</button>
+        {{end}}
     </aside>
 </div>
 

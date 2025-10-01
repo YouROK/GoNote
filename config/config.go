@@ -34,6 +34,11 @@ type Config struct {
 		MsgOnNewNote  bool    `yaml:"msg_on_new_note"`
 		MsgOnEditNote bool    `yaml:"msg_on_edit_note"`
 	}
+
+	Features struct {
+		DisableReportButton       bool `yaml:"disable_report_button"`
+		DisablePasswordPublishing bool `yaml:"disable_password_publishing"`
+	} `yaml:"features"`
 }
 
 var Cfg *Config
@@ -63,6 +68,9 @@ func defaultConfig() *Config {
 	cfg.TGBot.AdminIds = make([]int64, 0)
 	cfg.TGBot.MsgOnNewNote = false
 	cfg.TGBot.MsgOnEditNote = false
+
+	cfg.Features.DisableReportButton = false
+	cfg.Features.DisablePasswordPublishing = false
 
 	return cfg
 }
