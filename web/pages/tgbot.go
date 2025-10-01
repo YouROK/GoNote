@@ -2,6 +2,7 @@ package pages
 
 import (
 	"GoNote/config"
+	"GoNote/localize"
 	"GoNote/tgbot"
 	"fmt"
 	"log"
@@ -19,30 +20,26 @@ type ReportRequest struct {
 
 func TGBotReport(c *gin.Context) {
 	if config.Cfg.Features.DisableReportButton {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Disabled on site"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrDisableOnSite")})
 		return
 	}
 	var req ReportRequest
 
-	// Парсим JSON тело запроса
 	if err := c.ShouldBindJSON(&req); err != nil {
 		log.Println("Error binding request report:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing reason or text"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrBadRequest")})
 		return
 	}
 
-	// Формируем сообщение для админов
 	message := fmt.Sprintf(
-		"📢 New complaint received!\n\nReason: %s\nText: %s\nLink: %s\nEmail: %s",
+		localize.T(c, "TGBotMsgNewReport")+"\n\nReason: %s\nText: %s\nLink: %s\nEmail: %s",
 		req.Reason,
 		req.Text,
 		req.Link,
 		req.EMail,
 	)
 
-	// Отправляем всем админам
 	tgbot.SendMessageAll(message)
 
-	// Возвращаем успешный ответ
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }

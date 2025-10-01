@@ -2,6 +2,7 @@ package web
 
 import (
 	"GoNote/config"
+	"GoNote/localize"
 	"GoNote/storage"
 	template "GoNote/web/static"
 	"log"
@@ -26,7 +27,7 @@ func NewServer() *WebServer {
 func (ws *WebServer) Run() {
 	ws.r = gin.Default()
 
-	ws.r.Use(ws.SessionMiddleware())
+	ws.r.Use(ws.SessionMiddleware(), localize.LocalizerMiddleware())
 	ws.r.LoadHTMLGlob("web/temp/*")
 	template.RouteStaticFiles(ws.r)
 	ws.SetupRoutesPages()

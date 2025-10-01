@@ -2,6 +2,7 @@ package pages
 
 import (
 	"GoNote/config"
+	"GoNote/localize"
 	"GoNote/storage"
 	"GoNote/tgbot"
 	"GoNote/utils"
@@ -66,7 +67,7 @@ func NotePage(c *gin.Context) {
 	// Загружаем заметку
 	note, content, menu, err := store.GetNote(noteID)
 	if err != nil {
-		c.String(http.StatusNotFound, "Заметка не найдена")
+		c.String(http.StatusNotFound, localize.T(c, "MsgErrNoteNotFound"))
 		return
 	}
 
@@ -75,7 +76,7 @@ func NotePage(c *gin.Context) {
 
 	counter := incrementCounter(c, noteID, store)
 
-	c.HTML(http.StatusOK, "view_note.go.html", gin.H{
+	c.HTML(http.StatusOK, "view_note.go.html", localize.AddMessages(c, "view_note.go.html", gin.H{
 		"note":                note,
 		"content":             template.HTML(content),
 		"menu":                template.HTML(menu),
@@ -83,7 +84,7 @@ func NotePage(c *gin.Context) {
 		"hasPass":             hasPass,
 		"counter":             counter,
 		"disableReportButton": config.Cfg.Features.DisableReportButton,
-	})
+	}))
 }
 
 func contains(slice []string, item string) bool {
@@ -105,18 +106,18 @@ func CheckNotePassword(c *gin.Context) {
 		Password string `json:"password"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrBadRequest")})
 		return
 	}
 
 	note, _, _, err := store.GetNote(noteID)
 	if err != nil || note == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "note not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": localize.T(c, "MsgErrNoteNotFound")})
 		return
 	}
 
 	if note.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "note is read only"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrNoteReadOnly")})
 		return
 	}
 
@@ -137,7 +138,7 @@ func CheckNotePassword(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusUnauthorized, gin.H{"ok": false, "error": "invalid password"})
+	c.JSON(http.StatusUnauthorized, gin.H{"ok": false, "error": localize.T(c, "MsgErrWrongPassword")})
 }
 
 func EditNotePage(c *gin.Context) {
@@ -163,20 +164,16 @@ func EditNotePage(c *gin.Context) {
 	// Загружаем заметку
 	note, content, menu, err := store.GetNote(noteID)
 	if err != nil || note == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "note not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": localize.T(c, "MsgErrNoteNotFound")})
 		return
 	}
 
-	acceptLanguage := c.GetHeader("Accept-Language")
-	isRussian := strings.HasPrefix(acceptLanguage, "ru") || strings.Contains(acceptLanguage, "ru;")
-
-	c.HTML(http.StatusOK, "edit_note.go.html", gin.H{
+	c.HTML(http.StatusOK, "edit_note.go.html", localize.AddMessages(c, "edit_note.go.html", gin.H{
 		"note":                      note,
 		"content":                   template.HTML(content),
 		"menu":                      template.HTML(menu),
-		"isRussian":                 isRussian,
 		"disablePasswordPublishing": config.Cfg.Features.DisablePasswordPublishing,
-	})
+	}))
 }
 
 type reqAddUpdNote struct {
@@ -190,12 +187,17 @@ type reqAddUpdNote struct {
 func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	var req *reqAddUpdNote
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrBadRequest")})
+		return nil, false
+	}
+
+	if len(req.Title) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrEmptyTitle")})
 		return nil, false
 	}
 
 	if len(req.Title) < 3 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Title is too small"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrTitleSmall")})
 		return nil, false
 	}
 
@@ -236,17 +238,17 @@ func checkAddUpdNote(c *gin.Context) (*reqAddUpdNote, bool) {
 	req.Menu = policyMenu.Sanitize(req.Menu)
 
 	if len(req.Content) > 1000000 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Content exceeds maximum size"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrContentLarge")})
 		return nil, false
 	}
 
 	if len(req.Menu) > 10000 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Menu content exceeds maximum size"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrMenuLarge")})
 		return nil, false
 	}
 
 	if len(req.Content) == 0 || isEmptyContent(req.Content) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Content cannot be empty"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": localize.T(c, "MsgErrEmptyTitle")})
 		return nil, false
 	}
 
@@ -302,7 +304,7 @@ func NewNote(c *gin.Context) {
 	// Сохраняем заметку
 	err = store.UpdateNote(note, req.Content, req.Menu)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": localize.T(c, "MsgErrFailedToSaveNote")})
 		return
 	}
 
@@ -323,7 +325,7 @@ func NewNote(c *gin.Context) {
 	if config.Cfg.TGBot.MsgOnNewNote {
 		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
 		message := fmt.Sprintf(
-			"Создана новая заметка\n\nTitle: %s\n\nLink: %s\n\nID: %s",
+			localize.T(c, "TGBotMsgNewNoteCreated")+"\n\nTitle: %s\n\nLink: %s\n\nID: %s",
 			note.Title,
 			link,
 			note.ID,
@@ -363,18 +365,18 @@ func EditNote(c *gin.Context) {
 	// Проверяем пароль
 	note, _, _, err = store.GetNote(noteID)
 	if err != nil || note == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Note not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": localize.T(c, "MsgErrNoteNotFound")})
 		return
 	}
 	if !hasAccess && note.Password != "" && req.Password != note.Password {
 		// Пользователь не может редактировать и в заметке задан пароль и не совпадает
-		c.JSON(http.StatusForbidden, gin.H{"error": "wrong password"})
+		c.JSON(http.StatusForbidden, gin.H{"error": localize.T(c, "MsgErrWrongPassword")})
 		return
 	}
 
 	if !hasAccess && (note.Password == "" || req.Password != note.Password) {
 		// Нет в сессии, пароль пустой или не совпадает
-		c.JSON(http.StatusForbidden, gin.H{"error": "No access"})
+		c.JSON(http.StatusForbidden, gin.H{"error": localize.T(c, "MsgErrAccessDeny")})
 		return
 	}
 
@@ -389,7 +391,7 @@ func EditNote(c *gin.Context) {
 	// Сохраняем заметку
 	err = store.UpdateNote(note, req.Content, req.Menu)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save note"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": localize.T(c, "MsgErrFailedToSaveNote")})
 		return
 	}
 
@@ -410,7 +412,7 @@ func EditNote(c *gin.Context) {
 	if config.Cfg.TGBot.MsgOnEditNote {
 		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
 		message := fmt.Sprintf(
-			"Отредактирована заметка\n\nTitle: %s\n\nLink: %s\n\nID: %s",
+			localize.T(c, "TGBotMsgNoteEdited")+"\n\nTitle: %s\n\nLink: %s\n\nID: %s",
 			note.Title,
 			link,
 			note.ID,

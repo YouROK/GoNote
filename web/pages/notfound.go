@@ -1,7 +1,11 @@
 package pages
 
-import "github.com/gin-gonic/gin"
+import (
+	"GoNote/localize"
+
+	"github.com/gin-gonic/gin"
+)
 
 func NotFound(c *gin.Context) {
-	c.HTML(404, "notfound.go.html", nil)
+	c.HTML(404, "notfound.go.html", localize.AddMessages(c, "notfound.go.html"))
 }

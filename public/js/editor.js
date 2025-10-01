@@ -3,10 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const config = window.gonote_config || {};
     const {
         noteID = 'new',
-        isRussian = false,
         initialContent = '',
         initialTitle = '',
-        initialAuthor = ''
+        initialAuthor = '',
+        PageEditNoteYourNote = '',
+        PageEditNoteMenuPH = '',
+        MsgErrEmptyTitle = '',
+        MsgErrTitleSmall = '',
+        MsgErrContentEmpty = '',
+        MsgErrContentLarge = '',
+        MsgErrMenuLarge = ''
     } = config;
 
     // === DOM-элементы ===
@@ -131,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        placeholder: 'Your note...'
+        placeholder: PageEditNoteYourNote
     });
 
     const menuQuill = new Quill('#menu-editor', {
@@ -158,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        placeholder: 'Menu (links, headers...)'
+        placeholder: PageEditNoteMenuPH
     });
 
     menuQuill.on('selection-change', (range) => {
@@ -305,11 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = quill.root.innerHTML;
         const menu = menuQuill.root.innerHTML;
 
-        if (!title) return GonoteUtils.showMessage(isRussian ? 'Заголовок не может быть пустым' : 'Title cannot be empty');
-        if (title.length < 3) return GonoteUtils.showMessage(isRussian ? 'Заголовок слишком короткий' : 'Title is too small');
-        if (!content || quill.root.innerText.trim().length === 0) return GonoteUtils.showMessage(isRussian ? 'Контент не может быть пустым' : 'Content cannot be empty');
-        if (content.length > LIMIT_NOTE) return GonoteUtils.showMessage(isRussian ? 'Превышен лимит размера!' : 'Content exceeds maximum size!');
-        if (menu.length > LIMIT_MENU) return GonoteUtils.showMessage(isRussian ? 'Превышен лимит размера меню!' : 'Menu content exceeds maximum size!');
+        if (!title) return GonoteUtils.showMessage(MsgErrEmptyTitle);
+        if (title.length < 3) return GonoteUtils.showMessage(MsgErrTitleSmall);
+        if (!content || quill.root.innerText.trim().length === 0) return GonoteUtils.showMessage(MsgErrContentEmpty);
+        if (content.length > LIMIT_NOTE) return GonoteUtils.showMessage(MsgErrContentLarge);
+        if (menu.length > LIMIT_MENU) return GonoteUtils.showMessage(MsgErrMenuLarge);
 
         const link = noteID === 'new' ? '/new' : `/edit/${noteID}`;
 

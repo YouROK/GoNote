@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ .Lang }}">
 <head>
     <title>{{if .note}}{{.note.Title}} - GoNote{{else}}GoNote{{end}}</title>
     
     {{template "head.go.html"}}
 
-    <meta name="description" content="GoNote — пиши заметки и инструкции в пару кликов. Красиво оформи, сохрани и поделись без лишних заморочек.">
-    <meta name="keywords" content="заметки, блог, статьи, инструкции, онлайн редактор, GoNote">
+    <meta name="description" content="GoNote — {{.PageEditNoteDescription}}">
+    <meta name="keywords" content="{{.PageEditNoteKeywords}}, GoNote">
     <link rel="canonical" href="https://gonote.ru/">
 
     <meta property="og:type" content="article">
     <meta property="og:title" content="GoNote">
-    <meta property="og:description" content="Запиши, оформи, отправь! GoNote — лёгкий редактор для твоих идей, заметок и инструкций">
+    <meta property="og:description" content="{{.PageEditNoteOGDescription}}">
     <meta property="og:url" content="https://gonote.ru">
     <meta property="og:site_name" content="GoNote">
     <meta property="og:image" content="https://gonote.ru/banner.png" />
 
     <meta name="twitter:title" content="GoNote">
-    <meta name="twitter:description" content="Запиши, оформи, отправь! GoNote — лёгкий редактор для твоих идей, заметок и инструкций">
+    <meta name="twitter:description" content="{{.PageEditNoteOGDescription}}">
     <meta name="twitter:card" content="summary_large_image" />
 
 </head>
@@ -29,17 +29,17 @@
         </div>
     </aside>
     <main class="content">
-        <input type="text" class="title-input" placeholder="Title" value="{{if .note}}{{.note.Title}}{{end}}">
-        <input type="text" class="meta-input" placeholder="Your name" value="{{if .note}}{{.note.Author}}{{end}}">
+        <input type="text" class="title-input" placeholder="{{.PageEditNoteTitle}}" value="{{if .note}}{{.note.Title}}{{end}}">
+        <input type="text" class="meta-input" placeholder="{{.PageEditNoteYourName}}" value="{{if .note}}{{.note.Author}}{{end}}">
         <div id="editor">
             {{.content}}
         </div>
         <div class="char-counter" id="charCounter">0 / 1000000</div>
     </main>
     <aside class="sidebar-right">
-        <button class="sidebar-right-btn" id="pubBtn">Publish</button>
+        <button class="sidebar-right-btn" id="pubBtn">{{.PageEditNotePublish}}</button>
         {{ if not .disablePasswordPublishing }}
-        <button class="sidebar-right-btn" id="passBtn">Publish Password</button>
+        <button class="sidebar-right-btn" id="passBtn">{{.PageEditNotePublishPassword}}</button>
         {{end}}
         <div class="msg-box" id="msgBox"></div>
     </aside>
@@ -48,27 +48,26 @@
 <!-- Модальное окно для предупреждения о пароле -->
 <div id="pubModal" class="modal">
     <div class="modal-content">
-        {{if .isRussian}}
-            <p class="modal-title">Пожалуйста, запомните</p>
-            <p>Если вы захотите отредактировать эту страницу позже, вам понадобится этот пароль. Запишите или запомните этот пароль</p>
-            <p>Ваш Пароль: <span id="modalPassword" style="font-weight:bold;"></span></p>
-            <button id="confirmPub">Опубликовать</button>
-        {{else}}
-            <p class="modal-title">Please Remember</p>
-            <p>If you want to edit this page later, you should remember or save the password</p>
-            <p>Your Password: <span id="modalPassword" style="font-weight:bold;"></span></p>
-            <button id="confirmPub">Publish</button>
-        {{end}}
+            <p class="modal-title">{{.PageEditNoteModalTitle}}</p>
+            <p>{{.PageEditNoteModalMessage}}</p>
+            <p>{{.PageEditNoteModalYourPass}}: <span id="modalPassword" style="font-weight:bold;"></span></p>
+            <button id="confirmPub">{{.PageEditNotePublish}}</button>
     </div>
 </div>
 
 <script>
     window.gonote_config = {
         noteID: "{{if .note}}{{.note.ID}}{{else}}new{{end}}",
-        isRussian: {{.isRussian}},
         initialTitle: {{if .note}}{{.note.Title}}{{else}}""{{end}},
         initialAuthor: {{if .note}}{{.note.Author}}{{else}}""{{end}},
-        initialContent: {{.content}}
+        initialContent: {{.content}},
+        MsgErrEmptyTitle: "{{js .MsgErrEmptyTitle}}",
+        MsgErrTitleSmall: "{{js .MsgErrTitleSmall}}",
+        MsgErrContentEmpty: "{{js .MsgErrContentEmpty}}",
+        MsgErrContentLarge: "{{js .MsgErrContentLarge}}",
+        MsgErrMenuLarge: "{{js .MsgErrMenuLarge}}",
+        PageEditNoteYourNote: "{{js .PageEditNoteYourNote}}",
+        PageEditNoteMenuPH: "{{js .PageEditNoteMenuPH}}",
     };
 </script>
 <script src="/js/shared.js"></script>

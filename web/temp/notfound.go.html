@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ .Lang }}">
 <head>
-    <title>404 — Страница не найдена — GoNote</title>
+    <title>{{ .Page404Title }}</title>
 
     {{template "head.go.html"}}
 
-    <meta name="description" content="Страница не найдена — GoNote">
+    <meta name="description" content="{{ .Page404Description }}">
     <meta name="robots" content="noindex, follow">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="404 — GoNote">
-    <meta property="og:description" content="К сожалению, такой страницы не существует">
+    <meta property="og:title" content="{{ .Page404Title }}">
+    <meta property="og:description" content="{{ .Page404Description }}">
     <meta property="og:url" content="https://gonote.ru">
     <meta property="og:site_name" content="GoNote">
     <meta property="og:image" content="https://gonote.ru/banner.png" />
@@ -57,11 +57,9 @@
     <aside class="sidebar-left"></aside>
     <main class="content">
         <div class="notfound">
-            <h1>404</h1>
-            <p>Такой страницы точно нет…
-                <br>Зато ты можешь создать свою на <a href="/">GoNote</a>
-            </p>
-            <a href="/" class="btn">Создать заметку</a>
+            <h1>{{ .Page404Header }}</h1>
+            <p>{{ .Page404Message }}</p>
+            <a href="/" class="btn">{{ .Page404Button }}</a>
         </div>
     </main>
     <aside class="sidebar-right"></aside>

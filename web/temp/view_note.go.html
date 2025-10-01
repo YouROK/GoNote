@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ .Lang }}">
 <head>
     <title>{{if .note}}{{.note.Title}} - GoNote{{else}}GoNote{{end}}</title>
 
     {{template "head.go.html"}}
 
     <meta name="description" content="{{.note.Title}} — {{if .note.Author}} {{.note.Author}}, {{end}}{{.note.UpdatedAt.Format "02 Jan 2006"}}">
-    <meta name="keywords" content="заметки, блог, статьи, инструкции, GoNote {{.note.Author}}">
+    <meta name="keywords" content="{{.ViewNoteKeywords}}, GoNote {{.note.Author}}">
     <link rel="canonical" href="https://gonote.ru/note/{{.note.ID}}">
 
     <meta property="og:type" content="article">
@@ -43,49 +43,49 @@
         </div>
     </main>
     <aside class="sidebar-right">
-        <button class="sidebar-right-btn" id="copyBtn">Copy Link</button>
-        <button class="sidebar-right-btn" id="shareBtn">Share</button>
+        <button class="sidebar-right-btn" id="copyBtn">{{.PageViewNoteCopyLink}}</button>
+        <button class="sidebar-right-btn" id="shareBtn">{{.PageViewNoteShare}}</button>
         {{if or .hasEdit .hasPass}}
-            <button class="sidebar-right-btn" id="editBtn">Edit</button>
+            <button class="sidebar-right-btn" id="editBtn">{{.PageViewNoteEdit}}</button>
         {{end}}
         {{ if not .disableReportButton }}
-        <button class="sidebar-right-btn" id="reportBtn">Report</button>
+        <button class="sidebar-right-btn" id="reportBtn">{{.PageViewNoteReport}}</button>
         {{end}}
     </aside>
 </div>
 
 <div id="passwordModal" class="modal">
     <div class="modal-content">
-        <p class="modal-title">Enter Password</p>
-        <input type="password" id="notePassword" placeholder="Password">
-        <button id="submitPassword">Edit Note</button>
+        <p class="modal-title">{{.PageViewNoteEnterPassword}}</p>
+        <input type="password" id="notePassword" placeholder="{{.PageViewNotePassword}}">
+        <button id="submitPassword">{{.PageViewNoteEditNote}}</button>
     </div>
 </div>
 
 <div id="reportModal" class="modal">
     <div class="modal-content">
-        <p class="modal-title">Report</p>
+        <p class="modal-title">{{.PageViewNoteReport}}</p>
 
-        <p for="reportReason">Reason:</p>
+        <p for="reportReason">{{.PageViewNoteReason}}:</p>
         <select id="reportReason">
-            <option value="" disabled selected>Select a reason</option>
-            <option value="Porn / Adult content">Porn / Adult content</option>
-            <option value="Copyright / Licensed content">Copyright / Licensed content</option>
-            <option value="Hate / Harassment">Hate / Harassment</option>
-            <option value="Violence / Gore">Violence / Gore</option>
-            <option value="Self-harm / Suicide">Self-harm / Suicide</option>
-            <option value="Privacy violation / Personal info">Privacy violation / Personal info</option>
-            <option value="Illegal activity / Drugs">Illegal activity / Drugs</option>
-            <option value="Other">Other</option>
+            <option value="" disabled selected>{{.PageViewNoteSelectAReason}}</option>
+            <option value="Copyright / Licensed content">{{.PageViewNoteCopyrightLicensedContent}}</option>
+            <option value="Porn / Adult content">{{.PageViewNotePornAdultContent}}</option>
+            <option value="Hate / Harassment">{{.PageViewNoteHateHarassment}}</option>
+            <option value="Violence / Gore">{{.PageViewNoteViolenceGore}}</option>
+            <option value="Self-harm / Suicide">{{.PageViewNoteSelfHarmSuicide}}</option>
+            <option value="Privacy violation / Personal info">{{.PageViewNotePrivacyViolationPersonalInfo}}</option>
+            <option value="Illegal activity / Drugs">{{.PageViewNoteIllegalActivityDrugs}}</option>
+            <option value="Other">{{.PageViewNoteOther}}</option>
         </select>
 
-        <p>Email:</p>
+        <p>{{.PageViewNoteEmail}}:</p>
         <input type="email" id="reportEmail" placeholder="email@example.com">
 
-        <p>Details:</p>
-        <textarea id="reportText" placeholder="Describe the issue"></textarea>
+        <p>{{.PageViewNoteDetails}}:</p>
+        <textarea id="reportText" placeholder="{{.PageViewNoteDescribeTheIssue}}"></textarea>
 
-        <button id="submitReport">Send</button>
+        <button id="submitReport">{{.PageViewNoteSend}}</button>
         <div class="msg-box" id="msgBox"></div>
     </div>
 </div>
