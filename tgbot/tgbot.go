@@ -16,11 +16,13 @@ var (
 func Start() {
 	if config.Cfg.TGBot.Token == "" {
 		log.Println("TGBot token is empty")
+		config.Cfg.Features.DisableReportButton = true
 		return
 	}
 
 	if len(config.Cfg.TGBot.AdminIds) == 0 {
 		log.Println("TGBot admins is empty")
+		config.Cfg.Features.DisableReportButton = true
 		return
 	}
 
@@ -34,6 +36,7 @@ func Start() {
 	bot, err = tele.NewBot(pref)
 	if err != nil {
 		log.Println("Error start tg bot:", err)
+		config.Cfg.Features.DisableReportButton = true
 		return
 	}
 	log.Println("TG Bot started...")
