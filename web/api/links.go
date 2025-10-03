@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/html/charset"
+	"golang.org/x/text/transform"
 )
 
 func GetLinkTitle(c *gin.Context) {
@@ -59,10 +61,21 @@ func GetLinkTitle(c *gin.Context) {
 		return
 	}
 
-	// Читаем только начало тела (до 10 КБ), чтобы не тратить память
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 10240))
+	// Читаем первые 10Кб, чтобы не тратить память
+	rawBody, err := io.ReadAll(io.LimitReader(resp.Body, 10240))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "failed to read response"})
+		return
+	}
+
+	// Определяем кодировку
+	enc, _, _ := charset.DetermineEncoding(rawBody, resp.Header.Get("Content-Type"))
+
+	// Декодируем в UTF-8
+	utf8Reader := transform.NewReader(strings.NewReader(string(rawBody)), enc.NewDecoder())
+	body, err := io.ReadAll(utf8Reader)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "failed to decode response"})
 		return
 	}
 
