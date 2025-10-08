@@ -13,7 +13,7 @@ func (bs *BboltStore) CreateNote(n *models.Note, content, menu string) error {
 	return bs.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(NotesBucket))
 		if bucket == nil {
-			return fmt.Errorf("bucket %s not found", NotesBucket)
+			return fmt.Errorf("%s not found", NotesBucket)
 		}
 
 		noteBucket, err := bucket.CreateBucketIfNotExists([]byte(n.ID))
@@ -52,7 +52,7 @@ func (bs *BboltStore) GetNote(noteID string) (*models.Note, string, string, erro
 
 		noteBucket := bucket.Bucket([]byte(noteID))
 		if noteBucket == nil {
-			return fmt.Errorf("bucket %s not found", noteID)
+			return fmt.Errorf("%s not found", noteID)
 		}
 
 		noteData := noteBucket.Get([]byte("note"))
@@ -93,10 +93,10 @@ func (bs *BboltStore) DeleteNote(noteID string) error {
 	return bs.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(NotesBucket))
 		if bucket == nil {
-			return fmt.Errorf("bucket %s not found", NotesBucket)
+			return fmt.Errorf("%s not found", NotesBucket)
 		}
 
-		if err := bucket.Delete([]byte(noteID)); err != nil {
+		if err := bucket.DeleteBucket([]byte(noteID)); err != nil {
 			return err
 		}
 
@@ -110,13 +110,13 @@ func (bs *BboltStore) ListNotes() ([]*models.Note, error) {
 	err := bs.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(NotesBucket))
 		if bucket == nil {
-			return fmt.Errorf("bucket %s not found", NotesBucket)
+			return fmt.Errorf("%s not found", NotesBucket)
 		}
 
 		return bucket.ForEachBucket(func(k []byte) error {
 			if k != nil {
 				noteBucket := bucket.Bucket(k)
-				if noteBucket == nil {
+				if noteBucket != nil {
 					noteData := noteBucket.Get([]byte("note"))
 					var note models.Note
 					if err := json.Unmarshal(noteData, &note); err != nil {

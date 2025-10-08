@@ -10,7 +10,6 @@ import (
 const (
 	NotesBucket    = "notes"
 	SessionsBucket = "sessions"
-	CountersBucket = "counters"
 )
 
 type BboltStore struct {
@@ -34,10 +33,6 @@ func NewBboltStore(dbDir string) (*BboltStore, error) {
 			return err
 		}
 		_, err = tx.CreateBucketIfNotExists([]byte(SessionsBucket))
-		if err != nil {
-			return err
-		}
-		_, err = tx.CreateBucketIfNotExists([]byte(CountersBucket))
 		if err != nil {
 			return err
 		}

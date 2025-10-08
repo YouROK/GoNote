@@ -13,13 +13,19 @@ func (bs *BboltStore) GetCounterViews(noteID string) (*models.Counter, error) {
 	var err error
 
 	err = bs.db.View(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(CountersBucket))
+		bucket := tx.Bucket([]byte(NotesBucket))
 		if bucket == nil {
 			counter = &models.Counter{Count: 0}
 			return nil
 		}
 
-		counterData := bucket.Get([]byte(noteID))
+		noteBucket := bucket.Bucket([]byte(noteID))
+		if bucket == nil {
+			counter = &models.Counter{Count: 0}
+			return nil
+		}
+
+		counterData := noteBucket.Get([]byte("counter"))
 		if counterData == nil {
 			counter = &models.Counter{Count: 0}
 			return nil
@@ -42,12 +48,17 @@ func (bs *BboltStore) IncrementCounterViews(noteID string) (*models.Counter, err
 	var err error
 
 	err = bs.db.Update(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(CountersBucket))
+		bucket := tx.Bucket([]byte(NotesBucket))
 		if bucket == nil {
-			return fmt.Errorf("bucket %s not found", CountersBucket)
+			return fmt.Errorf("bucket %s not found", NotesBucket)
 		}
 
-		counterData := bucket.Get([]byte(noteID))
+		noteBucket := bucket.Bucket([]byte(noteID))
+		if bucket == nil {
+			return fmt.Errorf("%s not found", noteID)
+		}
+
+		counterData := noteBucket.Get([]byte("counter"))
 		var currentCounter models.Counter
 		if counterData != nil {
 			if err := json.Unmarshal(counterData, &currentCounter); err != nil {
@@ -63,7 +74,7 @@ func (bs *BboltStore) IncrementCounterViews(noteID string) (*models.Counter, err
 			return err
 		}
 
-		return bucket.Put([]byte(noteID), newCounterData)
+		return noteBucket.Put([]byte("counter"), newCounterData)
 	})
 
 	return newCounter, err
