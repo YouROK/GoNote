@@ -2,6 +2,7 @@ package tgbot
 
 import (
 	"GoNote/config"
+	"GoNote/storage"
 	"log"
 	"time"
 
@@ -10,7 +11,8 @@ import (
 )
 
 var (
-	bot *tele.Bot
+	bot   *tele.Bot
+	store storage.Store
 )
 
 func Start() {
@@ -48,6 +50,10 @@ func Start() {
 	go bot.Start()
 
 	SendMessageAll("Starting GoNote server...")
+}
+
+func SetStore(str storage.Store) {
+	store = str
 }
 
 func SendMessageAll(message string) {

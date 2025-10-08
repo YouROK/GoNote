@@ -4,6 +4,7 @@ import (
 	"GoNote/config"
 	"GoNote/localize"
 	"GoNote/storage"
+	"GoNote/tgbot"
 	template "GoNote/web/static"
 	"log"
 	"strconv"
@@ -35,6 +36,7 @@ func NewServer() *WebServer {
 	}
 
 	go store.RemoveExpiredSessions()
+	tgbot.SetStore(store)
 
 	return &WebServer{store: store}
 }
