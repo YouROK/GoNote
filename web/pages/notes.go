@@ -67,7 +67,8 @@ func NotePage(c *gin.Context) {
 	// Загружаем заметку
 	note, content, menu, err := store.GetNote(noteID)
 	if err != nil {
-		c.String(http.StatusNotFound, localize.T(c, "MsgErrNoteNotFound"))
+		NotFound(c)
+		//c.String(http.StatusNotFound, localize.T(c, "MsgErrNoteNotFound"))
 		return
 	}
 
@@ -164,7 +165,8 @@ func EditNotePage(c *gin.Context) {
 	// Загружаем заметку
 	note, content, menu, err := store.GetNote(noteID)
 	if err != nil || note == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": localize.T(c, "MsgErrNoteNotFound")})
+		NotFound(c)
+		//c.JSON(http.StatusNotFound, gin.H{"error": localize.T(c, "MsgErrNoteNotFound")})
 		return
 	}
 
@@ -272,14 +274,14 @@ func NewNote(c *gin.Context) {
 	id := ""
 	for {
 		title := req.Title
-		id = unidecode.Unidecode(title) + time.Now().Format("_01_02")
+		id = unidecode.Unidecode(title) + time.Now().Format("-01-02")
 		id = utils.Sanitize(id)
 		if len(id) < 3 {
 			//после очистки длина получилась меньше, пользователь ввел недопустимый title пример "..."
 			id = "note"
 		}
 		if i > 0 {
-			id += "_" + strconv.Itoa(i)
+			id += "-" + strconv.Itoa(i)
 		}
 
 		if n, _, _, _ := store.GetNote(id); n == nil {
