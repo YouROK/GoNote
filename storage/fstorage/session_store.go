@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -70,4 +71,14 @@ func (fs *FileStore) DeleteSession(sessionID string) error {
 func (fs *FileStore) SessionExists(sessionID string) bool {
 	_, err := os.Stat(fs.sessionPath(sessionID))
 	return err == nil
+}
+
+func (fs *FileStore) RemoveExpiredSessions() {
+	files, err := os.ReadDir(fs.sessions)
+	if err != nil {
+		return
+	}
+	for _, file := range files {
+		fs.LoadSession(strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())))
+	}
 }

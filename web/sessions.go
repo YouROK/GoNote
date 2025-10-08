@@ -2,9 +2,15 @@ package web
 
 import (
 	"GoNote/models"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	checkMu                 sync.Mutex
+	lastCheckExpiredSession = time.Now()
 )
 
 func (ws *WebServer) SessionMiddleware() gin.HandlerFunc {
@@ -44,5 +50,17 @@ func (ws *WebServer) SessionMiddleware() gin.HandlerFunc {
 		c.Set("session", sess)
 		c.Set("store", ws.store)
 		c.Next()
+		go ws.checkExpiredSessions()
 	}
+}
+
+func (ws *WebServer) checkExpiredSessions() {
+	checkMu.Lock()
+	if time.Now().Before(lastCheckExpiredSession) {
+		return
+	}
+	lastCheckExpiredSession = time.Now().Add(24 * time.Hour)
+	checkMu.Unlock()
+
+	ws.store.RemoveExpiredSessions()
 }

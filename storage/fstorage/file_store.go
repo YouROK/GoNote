@@ -17,3 +17,7 @@ func NewFileStore(dbDir string) *FileStore {
 		users:    filepath.Join(dbDir, "users"),
 	}
 }
+
+func (fs *FileStore) Close() error {
+	return nil
+}
