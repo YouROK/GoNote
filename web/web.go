@@ -17,10 +17,25 @@ type WebServer struct {
 }
 
 func NewServer() *WebServer {
-	store, err := storage.NewStore(storage.FS_STORE, "db")
+	var err error
+	var store storage.Store
+	switch config.Cfg.DB.Type {
+	case "fs":
+		store, err = storage.NewStore(storage.FsStore, "db")
+	case "bbolt":
+		store, err = storage.NewStore(storage.BoltdbStore, "db")
+	case "sqlite":
+		store, err = storage.NewStore(storage.SqliteStore, "db")
+	default:
+		store, err = storage.NewStore(storage.FsStore, "db")
+	}
+
 	if err != nil {
 		log.Fatal("Error create db:", err)
 	}
+
+	go store.RemoveExpiredSessions()
+
 	return &WebServer{store: store}
 }
 

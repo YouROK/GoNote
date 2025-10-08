@@ -2,23 +2,32 @@ package storage
 
 import (
 	"GoNote/models"
+	"GoNote/storage/bboltstore"
 	"GoNote/storage/fstorage"
 	"errors"
 )
 
-const FS_STORE = 0
-const SQLITE_STORE = 1
+const (
+	FsStore = iota
+	SqliteStore
+	BoltdbStore
+)
 
 func NewStore(typeStor int, dir string) (Store, error) {
-	if typeStor == FS_STORE {
+	if typeStor == FsStore {
 		return fstorage.NewFileStore(dir), nil
-		//} else {
+	} else if typeStor == SqliteStore {
+		return nil, errors.New("type store not support yet")
 		//	return sstorage.NewSQLiteStore(dir)
+	} else if typeStor == BoltdbStore {
+		return bboltstore.NewBboltStore(dir)
 	}
 	return nil, errors.New("type store not support")
 }
 
 type Store interface {
+	Close() error
+
 	// ---- Работа с заметками ----
 	CreateNote(n *models.Note, content, menu string) error
 	GetNote(noteID string) (*models.Note, string, string, error)
@@ -32,6 +41,7 @@ type Store interface {
 	SaveSession(sess *models.Session) error
 	DeleteSession(sessionID string) error
 	SessionExists(sessionID string) bool
+	RemoveExpiredSessions()
 
 	// ---- Работа со счетчиком просмотров ----
 	GetCounterViews(noteID string) (*models.Counter, error)

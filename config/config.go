@@ -18,6 +18,10 @@ type Config struct {
 		Host string `yaml:"host"`
 	} `yaml:"site"`
 
+	DB struct {
+		Type string `yaml:"type"` // fs, bbolt, sqlite(not support yet)
+	} `yaml:"db"`
+
 	Antispam struct {
 		MaxRequests int `yaml:"max_requests"`
 		WindowSec   int `yaml:"window_sec"`
@@ -57,6 +61,8 @@ func defaultConfig() *Config {
 	cfg.Server.Port = 8095
 
 	cfg.Site.Host = hostname
+
+	cfg.DB.Type = "fs"
 
 	cfg.Antispam.MaxRequests = 10
 	cfg.Antispam.WindowSec = 30
