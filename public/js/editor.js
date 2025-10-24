@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === Константы ===
-    const LIMIT_NOTE = 1000000;
+    const LIMIT_NOTE = 10000000;
     const LIMIT_MENU = 10000;
     const STORAGE_KEY = `gonote-editor-content-${noteID}`;
 
