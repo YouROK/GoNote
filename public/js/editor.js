@@ -277,20 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const len = quill.root.innerHTML.length;
         charCounter.textContent = `Limit note size: ${len} / ${LIMIT_NOTE}`;
         charCounter.style.color = len > LIMIT_NOTE ? 'red' : 'gray';
-        charCounter.style.opacity = len > LIMIT_NOTE ? 0 : Math.min(len / LIMIT_NOTE, 1.0);
-    }
-
-    // === Автопрокрутка ===
-    function autoScrollOnEdit(delta, oldDelta, source) {
-        if (source !== 'user') return;
-        const range = quill.getSelection();
-        if (!range) return;
-        const bounds = quill.getBounds(range.index);
-        const bottom = bounds.top + window.scrollY + bounds.height;
-        const shouldScroll = bottom > window.scrollY + window.innerHeight - 100;
-        if (shouldScroll) {
-            window.scrollBy({ top: bounds.height + 20, behavior: 'smooth' });
-        }
+        charCounter.style.opacity = len > LIMIT_NOTE ? 1.0 : Math.min(len / LIMIT_NOTE, 1.0);
     }
 
     // === Сохранение в localStorage ===
@@ -343,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
     quill.on('text-change', (delta, oldDelta, source) => {
         updateCounter();
         saveAll();
-        autoScrollOnEdit(delta, oldDelta, source);
     });
 
     menuQuill.on('text-change', (delta, oldDelta, source) => {
