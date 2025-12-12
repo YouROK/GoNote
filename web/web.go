@@ -3,9 +3,9 @@ package web
 import (
 	"GoNote/config"
 	"GoNote/localize"
+	"GoNote/static"
 	"GoNote/storage"
 	"GoNote/tgbot"
-	template "GoNote/web/static"
 	"log"
 	"strconv"
 
@@ -45,8 +45,10 @@ func (ws *WebServer) Run() {
 	ws.r = gin.Default()
 
 	ws.r.Use(ws.SessionMiddleware(), localize.LocalizerMiddleware())
-	ws.r.LoadHTMLGlob("web/temp/*")
-	template.RouteStaticFiles(ws.r)
+	static.RouteEmbedFiles(ws.r)
 	ws.SetupRoutesPages()
-	ws.r.Run(config.Cfg.Server.Host + ":" + strconv.Itoa(config.Cfg.Server.Port))
+	err := ws.r.Run(config.Cfg.Server.Host + ":" + strconv.Itoa(config.Cfg.Server.Port))
+	if err != nil {
+		log.Println("Error starting server:", err)
+	}
 }
