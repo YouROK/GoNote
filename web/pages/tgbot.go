@@ -32,7 +32,7 @@ func TGBotReport(c *gin.Context) {
 	}
 
 	message := fmt.Sprintf(
-		localize.T(c, "TGBotMsgNewReport")+"\n\nReason: %s\nText: %s\nLink: %s\nEmail: %s",
+		"New report\n\nReason: %s\nText: %s\nLink: %s\nEmail: %s",
 		req.Reason,
 		req.Text,
 		req.Link,

@@ -49,10 +49,6 @@
   "MsgErrNoteReadOnly" : "Нельзя редактировать заметку",
   "MsgErrDisableOnSite" : "Disabled on site",
 
-  "TGBotMsgNewNoteCreated": "Заметка создана",
-  "TGBotMsgNoteEdited": "Заметка отредактирована",
-  "TGBotMsgNewReport": "New complaint received",
-
   "Page404Title": "Страница не найдена — GoNote",
   "Page404Description": "К сожалению, такой страницы не существует",
   "Page404Header": "404",

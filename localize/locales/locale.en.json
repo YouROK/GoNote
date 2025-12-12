@@ -49,10 +49,6 @@
   "MsgErrNoteReadOnly" : "Note is read only",
   "MsgErrDisableOnSite" : "Disabled on site",
 
-  "TGBotMsgNewNoteCreated": "Note created",
-  "TGBotMsgNoteEdited": "Note edited",
-  "TGBotMsgNewReport": "New complaint received",
-
   "Page404Title": "Page Not Found — GoNote",
   "Page404Description": "Sorry, this page does not exist",
   "Page404Header": "404",

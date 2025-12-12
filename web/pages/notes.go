@@ -327,7 +327,7 @@ func NewNote(c *gin.Context) {
 	if config.Cfg.TGBot.MsgOnNewNote {
 		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
 		message := fmt.Sprintf(
-			localize.T(c, "TGBotMsgNewNoteCreated")+"\n\nTitle: %s\n\nLink: %s\n\nID: %s\n\nIP: %s",
+			"Note created\n\nTitle: %s\n\nLink: %s\n\nID: %s\n\nIP: %s",
 			note.Title,
 			link,
 			note.ID,
@@ -415,7 +415,7 @@ func EditNote(c *gin.Context) {
 	if config.Cfg.TGBot.MsgOnEditNote {
 		link := "https://" + config.Cfg.Site.Host + "/note/" + note.ID
 		message := fmt.Sprintf(
-			localize.T(c, "TGBotMsgNoteEdited")+"\n\nTitle: %s\n\nLink: %s\n\nID: %s\n\nIP: %s",
+			"Note edited\n\nTitle: %s\n\nLink: %s\n\nID: %s\n\nIP: %s",
 			note.Title,
 			link,
 			note.ID,
